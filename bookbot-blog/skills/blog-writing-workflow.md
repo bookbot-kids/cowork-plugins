@@ -363,25 +363,74 @@ If tests still failing after 3 cycles, output article with detailed error report
 
 #### Step 5.1: Preview & Review
 
-Present the complete article to the reviewer inline in the conversation:
+Generate an HTML preview file so the reviewer can see the article with images rendered correctly. The markdown article file keeps its Hugo paths untouched — the preview is a separate file for review only.
 
-1. Output the full article content as rendered markdown
-2. **Display each image visually:** Read each generated image file (hero + all inline) using the Read tool so they display inline in the conversation. The markdown image paths (e.g., `/images/updates/filename.png`) are Hugo production paths and won't resolve in preview — you must use the Read tool with the actual local file path (e.g., `/tmp/assets/updates/filename.png`) to show the images. Do NOT change the Hugo paths in the article file — they are correct for production.
-3. Include: process documentation summary (test results, metrics), suggested category placement, and any flagged issues
+**Build the HTML preview:**
+
+1. Parse the article's YAML front matter and article body
+2. Map every image path from Hugo format to the local file path:
+   - Hugo path: `/images/updates/filename.png`
+   - Local path: the actual path where the image was saved during generation (e.g., `/tmp/assets/updates/filename.png`)
+3. Write an HTML file to the working directory named `[slug]-preview.html` using this template:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview: [Article Title]</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; line-height: 1.7; color: #1a1a1a; }
+    .front-matter { background: #f4f4f5; border-left: 4px solid #6366f1; padding: 16px 20px; border-radius: 6px; margin-bottom: 32px; font-size: 14px; font-family: monospace; white-space: pre-wrap; }
+    .front-matter strong { color: #6366f1; }
+    .hero { width: 100%; border-radius: 10px; margin-bottom: 32px; }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 24px 0; }
+    h1 { font-size: 2em; line-height: 1.2; margin-bottom: 0.5em; }
+    h2 { margin-top: 2em; color: #374151; }
+    blockquote { border-left: 3px solid #d1d5db; padding-left: 16px; color: #6b7280; }
+    a { color: #6366f1; }
+    .meta { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+    .badge { display: inline-block; background: #e0e7ff; color: #4338ca; padding: 2px 10px; border-radius: 12px; font-size: 13px; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <div class="front-matter">
+<strong>title:</strong> "[title]"
+<strong>slug:</strong> "[slug]"
+<strong>date:</strong> [date]
+<strong>author:</strong> "[author]"
+<strong>category:</strong> "[category]"
+<strong>description:</strong> "[description]"
+<strong>image:</strong> "[image path]"
+  </div>
+
+  <img class="hero" src="[local hero image path]" alt="[hero alt text]">
+
+  [Article body converted to HTML — convert markdown headings, paragraphs, bold, italic, lists, links, and images. Replace all image src values with local file paths.]
+
+</body>
+</html>
+```
+
+4. Use the Read tool to display the HTML file in the conversation, so the reviewer sees a rendered preview
+5. Also include: process documentation summary (test results, metrics), suggested category placement, and any flagged issues
+
+**Important:** The `.md` article file is the source of truth. Never modify its Hugo image paths. The HTML preview is disposable — it is NOT published.
 
 #### Step 5.2: Iterate on Feedback
 
 The reviewer may request changes to the text, images, or both. For each round of feedback:
 
 **Text changes:**
-1. Edit the article as requested
+1. Edit the article `.md` file as requested
 2. Re-run any affected quality tests
-3. Re-show the preview (full article + images)
+3. Regenerate the HTML preview file and re-show it
 
 **Image changes:**
 1. Regenerate the specific image(s) with an updated prompt via the Gemini API (see `image-generation.md`)
 2. Save the new image, replacing the old file
-3. Re-show the preview (full article + images)
+3. Regenerate the HTML preview file and re-show it
 
 Repeat until the reviewer gives explicit approval ("looks good", "approve", "publish it", or similar).
 
@@ -399,6 +448,7 @@ Once approved, publish the article directly to `bookbot-kids/bookbot-www` via th
 2. Hero image: `assets/updates/[slug].png`
 3. Inline images: `assets/updates/[descriptive-name].png` (3–6 files)
 4. Process documentation: save locally only (NOT published)
+5. HTML preview: delete after publishing (NOT published)
 
 **Publishing workflow (GitHub Git Data API):**
 
