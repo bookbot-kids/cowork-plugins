@@ -453,7 +453,7 @@ The Git Data API is used instead of the Contents API because it supports files u
 
 ```bash
 REPO="bookbot-kids/bookbot-www"
-AUTH="Authorization: Bearer $GITHUB_TOKEN"
+AUTH="Authorization: token $GITHUB_TOKEN"
 
 # Step 1: Get the SHA of the main branch
 MAIN_SHA=$(curl -s -H "$AUTH" \

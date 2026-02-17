@@ -39,12 +39,12 @@ If missing, guide the user through creating one:
 1. Go to: https://github.com/settings/tokens
 2. Click **"Generate new token (classic)"**
 3. Give it a name (e.g., "Bookbot Blog Plugin")
-4. Select scope: **`repo`** (Full control of private repositories)
+4. Select scopes: **`repo`** (Full control of private repositories) and **`read:org`** (Read org membership — required to access the bookbot-kids organization)
 5. Click **Generate token** and copy it
 
 After the user provides the token, save it (see "Saving Variables" below), then verify access:
 ```bash
-curl -s -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/bookbot-kids/bookbot-www --head | head -1
+curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/bookbot-kids/bookbot-www --head | head -1
 ```
 Should return `HTTP/2 200` if the token works and has repo access.
 
