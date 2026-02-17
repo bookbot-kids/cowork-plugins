@@ -387,71 +387,101 @@ Repeat until the reviewer gives explicit approval ("looks good", "approve", "pub
 
 #### Step 5.3: Publish to Hugo Repository
 
-Once approved, publish the article to the `bookbot-kids/bookbot-www` Hugo website repository (local clone at `$BOOKBOT_WWW_PATH`):
+Once approved, publish the article directly to `bookbot-kids/bookbot-www` via the GitHub API. No local clone is needed.
 
-**Branch Strategy:**
-- Create a new branch: `blog/[slug]` (e.g., `blog/should-child-use-ai-homework`)
-- Never push directly to `main` without explicit permission
+**Auth detection:** Check which GitHub auth method is available:
+1. Run `gh auth status` — if it succeeds, use `gh api` commands
+2. Otherwise, check if `GITHUB_TOKEN` env var is set — if so, use `curl` with Bearer token
+3. If neither, ask the user to run `/setup`
 
-**File Operations:**
-1. Save article to `content/updates/[category]/[slug].md` (or `content/updates/[slug].md` if root-level)
-2. Save hero image to `assets/updates/[slug].png`
-3. Save inline images to `assets/updates/[descriptive-name].png`
-4. Save process documentation to working directory (NOT in the Hugo repo)
+**Files to publish:**
+1. Article: `content/updates/[category]/[slug].md` (or `content/updates/[slug].md` if root-level)
+2. Hero image: `assets/updates/[slug].png`
+3. Inline images: `assets/updates/[descriptive-name].png` (3–6 files)
+4. Process documentation: save locally only (NOT published)
 
-**Git Workflow:**
+**Publishing workflow (GitHub Git Data API):**
+
+The Git Data API is used instead of the Contents API because it supports files up to 100MB (Contents API has a 1MB limit, too small for 2K images).
+
+All examples below use `gh api`. If the user authenticated with a PAT instead, replace `gh api` calls with equivalent `curl` calls using `-H "Authorization: Bearer $GITHUB_TOKEN"`.
+
 ```bash
-# Create and checkout branch
-git checkout -b blog/[slug]
+# Step 1: Get the SHA of the main branch
+MAIN_SHA=$(gh api repos/bookbot-kids/bookbot-www/git/ref/heads/main --jq '.object.sha')
 
-# Add article and images
-git add content/updates/[slug].md   # or content/updates/[category]/[slug].md
-git add assets/updates/*.png         # new images only
+# Step 2: Create the blog branch
+gh api --method POST repos/bookbot-kids/bookbot-www/git/refs \
+  -f ref="refs/heads/blog/[slug]" \
+  -f sha="$MAIN_SHA"
 
-# Commit with descriptive message
-git commit -m "Add blog post: [Article Title]
+# Step 3: Get the base tree SHA
+BASE_TREE=$(gh api repos/bookbot-kids/bookbot-www/git/commits/$MAIN_SHA --jq '.tree.sha')
 
-- [word count] words, [reading time] min read
-- [number] research sources cited
-- All quality tests passed"
+# Step 4: Create a blob for each file (base64-encoded)
+# For the article:
+ARTICLE_BLOB=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/blobs \
+  -f content="$(base64 -i /path/to/article.md)" \
+  -f encoding="base64" \
+  --jq '.sha')
 
-# Push branch
-git push -u origin blog/[slug]
+# For each image:
+HERO_BLOB=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/blobs \
+  -f content="$(base64 -i /path/to/hero.png)" \
+  -f encoding="base64" \
+  --jq '.sha')
+# Repeat for each inline image...
+
+# Step 5: Create a tree with all the blobs
+TREE_SHA=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/trees \
+  --input - --jq '.sha' <<EOF
+{
+  "base_tree": "$BASE_TREE",
+  "tree": [
+    {"path": "content/updates/[category]/[slug].md", "mode": "100644", "type": "blob", "sha": "$ARTICLE_BLOB"},
+    {"path": "assets/updates/[slug].png", "mode": "100644", "type": "blob", "sha": "$HERO_BLOB"},
+    {"path": "assets/updates/[inline-1].png", "mode": "100644", "type": "blob", "sha": "$INLINE1_BLOB"},
+    {"path": "assets/updates/[inline-2].png", "mode": "100644", "type": "blob", "sha": "$INLINE2_BLOB"}
+  ]
+}
+EOF
+)
+
+# Step 6: Create a commit
+COMMIT_SHA=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/commits \
+  --input - --jq '.sha' <<EOF
+{
+  "message": "Add blog post: [Article Title]\n\n- [word count] words, [reading time] min read\n- [number] research sources cited\n- All quality tests passed",
+  "tree": "$TREE_SHA",
+  "parents": ["$MAIN_SHA"]
+}
+EOF
+)
+
+# Step 7: Update the branch ref to point to the new commit
+gh api --method PATCH repos/bookbot-kids/bookbot-www/git/refs/heads/blog/[slug] \
+  -f sha="$COMMIT_SHA"
+
+# Step 8: Create a pull request
+gh api --method POST repos/bookbot-kids/bookbot-www/pulls \
+  --input - <<EOF
+{
+  "title": "New blog post: [Short Title]",
+  "head": "blog/[slug]",
+  "base": "main",
+  "body": "## New Blog Post\n\n**Title:** [Full Article Title]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies\n\n### Quality Tests\nAll 6 automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin v1.0.0"
+}
+EOF
 ```
 
-**Pull Request (default behavior):**
-```bash
-gh pr create \
-  --title "New blog post: [Short Title]" \
-  --body "## New Blog Post
-
-**Title:** [Full Article Title]
-**Author:** $BOOKBOT_AUTHOR
-**Category:** [category or root]
-**Sources:** [N] peer-reviewed studies
-
-### Quality Tests
-All 6 automated tests passed.
-
-### Preview
-Once merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/
-
----
-Generated with the Bookbot Blog Plugin v1.0.0"
-```
-
-**Direct Push (only if team explicitly requests):**
-```bash
-git checkout main
-git merge blog/[slug]
-git push origin main
-```
+**Error handling:**
+- If any API call fails, show the error to the reviewer and suggest running `/setup` to verify credentials
+- If the branch already exists (409 conflict), ask the reviewer if they want to update the existing branch or create a new one with a suffix
 
 #### Step 5.4: Confirm Publication
 
-After pushing, provide confirmation:
-- Branch name and PR link (if PR created)
-- Preview URL (for branch deploys)
+After publishing, provide confirmation:
+- PR link (from the create PR response)
 - Production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (once merged to main)
 
 ---

@@ -244,15 +244,15 @@ Process documentation files are NOT published to the Hugo site. They are stored 
 
 ## Publishing & Deployment
 
-- **Repository:** `bookbot-kids/bookbot-www` (the Hugo site repo, local path in `$BOOKBOT_WWW_PATH`)
-- **Production:** Pushes to `main` branch trigger auto-deploy to https://www.bookbotkids.com/
+- **Repository:** `bookbot-kids/bookbot-www` (published via GitHub API — no local clone needed)
+- **Production:** Merges to `main` branch trigger auto-deploy to https://www.bookbotkids.com/
 - **Preview:** Branch deploys generate preview URLs
 - **Build command:** `hugo --minify`
 - **Build output:** `public/`
 
 ### File Placement on Publish
 
-When committing a new article:
+When publishing a new article (via GitHub API):
 
 ```
 bookbot-www/
