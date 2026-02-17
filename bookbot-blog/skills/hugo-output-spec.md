@@ -71,9 +71,9 @@ Every article must begin with this YAML front matter:
 
 ```yaml
 ---
-title: "Article Title Here"
-heading: "Article Title Here"
-slug: "article-slug-here"
+title: "Phonemic Awareness Activities That Build Strong Readers"
+heading: "Fun Phonemic Awareness Activities for Grades K–3"
+slug: "phonemic-awareness-activities"
 date: YYYY-MM-DD
 image: "/images/updates/hero-image-name.png"
 author: "$BOOKBOT_AUTHOR"
@@ -89,9 +89,9 @@ sitemap:
 
 | Field | Required | Notes |
 |-------|----------|-------|
-| `title` | Yes | Page title (used in SEO, browser tab). Under 70 characters. In quotes. |
-| `heading` | Yes | Display heading on the page. Usually matches `title`, but can differ. |
-| `slug` | Yes | URL-friendly identifier. Lowercase, hyphenated. Must match the filename (without `.md`). |
+| `title` | Yes | SEO title (browser tab, search results). 50–60 characters. In quotes. See **Title & Heading Guidelines** below. |
+| `heading` | Yes | Display heading on the page. Same intent as `title` but not identical. See **Title & Heading Guidelines** below. |
+| `slug` | Yes | URL-friendly identifier based on the primary keyword. Lowercase, hyphenated. Must match the filename (without `.md`). See **Slug Convention** below. |
 | `date` | Yes | ISO format: `YYYY-MM-DD`. Use the publication/generation date. |
 | `image` | Yes | Hero image path: `/images/updates/[name].png`. This path maps to `/assets/updates/[name].png`. |
 | `author` | Yes | Use the value of `$BOOKBOT_AUTHOR` env var (set during `/setup`). Links to `/content/authors/[author].md`. |
@@ -99,6 +99,42 @@ sitemap:
 | `description` | Yes | Meta description for SEO and card preview. Compelling, not clickbait. Aim for 150–160 characters. |
 | `sitemap.priority` | Yes | Always `0.5` for individual posts. |
 | `sitemap.changefreq` | Yes | Always `"monthly"` for individual posts. |
+
+### Title & Heading Guidelines
+
+The `title` (SEO title) and `heading` (H1 displayed on the page) must be crafted deliberately. The H1 in the article body (`# ...`) should match the `heading` field.
+
+**Audience:** Parents and teachers of children ages 5–9 (Grades K–3). Use American English spelling. Do not include any brand name in either field.
+
+**Inputs to consider:**
+- The article's primary keyword
+- Any secondary keywords (up to 5)
+- The article summary/outline
+- The article format (how-to, guide, checklist, explainer, comparison, etc.)
+- The key takeaway or promise of the article
+
+#### Title rules (`title` field — the SEO title)
+- Front-load the main topic — put the primary keyword near the start
+- Aim for 50–60 characters; keep it concise and specific
+- Include the primary keyword (or a close variant) exactly once
+- Use secondary keywords only if they fit naturally — never keyword-stuff
+- Avoid filler words: "ultimate," "best," "complete," "everything you need" — unless the article genuinely delivers on that promise
+- No quotes, no ALL CAPS
+
+#### Heading rules (`heading` field — the display H1)
+- Human-friendly and clear; can be slightly longer than the title
+- Include the primary keyword (or a close variant) exactly once
+- Must express the same intent as the title, but not be identical to it
+- If useful, include a parent/teacher framing like "for Grades K–3" or "for Ages 5–9," but only when it reads naturally
+
+#### Example
+
+For an article about phonemic awareness activities:
+
+```yaml
+title: "Phonemic Awareness Activities That Build Strong Readers"
+heading: "Fun Phonemic Awareness Activities for Grades K–3"
+```
 
 ### Fields NOT Used
 
@@ -212,13 +248,16 @@ Author, G. H. (Year). Article title. *Journal Name*. https://full-url-here
   - `phonics-comparison-diagram.png` (inline)
 
 ### Slug Convention
+- Derive the slug from the **primary keyword**, not the article title
 - Lowercase, hyphenated
-- Derived from the article title
-- Remove articles (a, an, the) and filler words if slug exceeds ~6 segments
+- Keep it short — aim for 2–4 words (3–5 URL segments max)
+- Add a qualifier only when needed for clarity or uniqueness (e.g., `phonemic-awareness-activities` rather than just `phonemic-awareness` if there's already a general article on that topic)
+- Drop stop words (a, an, the, is, for, of) unless removing them changes the meaning
 - Examples:
-  - "Should My Child Use AI for Homework?" → `should-child-use-ai-homework`
-  - "What is Phonics? Synthetic vs Analytic Explained" → `what-is-phonics`
-  - "8 Ways to Boost Reading Motivation" → `8-ways-to-boost-reading-motivation`
+  - Primary keyword "phonemic awareness activities" → `phonemic-awareness-activities`
+  - Primary keyword "what is phonics" → `what-is-phonics`
+  - Primary keyword "reading motivation" → `reading-motivation`
+  - Primary keyword "AI for homework" → `ai-for-homework`
 
 ---
 

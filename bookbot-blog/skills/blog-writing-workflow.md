@@ -155,7 +155,7 @@ If verification fails, discard that finding and continue with verified data only
 - Reinforce that intervention helps
 - Suggest next steps
 - Bookbot mention 4: Connect research back to Bookbot's work
-- End with engaging question for comments
+- End with an encouraging call to action
 
 ---
 
@@ -202,24 +202,28 @@ Include 2–4 mentions following the patterns in `voice-guide.md`:
 
 After the article is written and before quality testing, generate images following `image-generation.md`.
 
+**Image output directory:** Create a directory in the working directory at `assets/updates/` to store all generated images. All image paths below are relative to the working directory.
+
 #### Step 3.5.1: Generate Hero Image
 
 1. Analyze the article's main theme, key visual concepts, and emotional tone
 2. Construct a photographic hero image prompt using the template in `image-generation.md`
 3. Call the Gemini API to generate the image (16:9, 2K, photographic)
-4. Save to `/assets/updates/[slug].png` (filename matches article slug)
+4. Save to `assets/updates/[slug].png` (filename matches article slug)
 5. Write descriptive alt text
-6. Set `image: "/images/updates/[slug].png"` in the YAML front matter
+6. Set `image: "/images/updates/[slug].png"` in the YAML front matter (this is the Hugo production path — different from the local save path)
 
 #### Step 3.5.2: Generate Inline Images
 
+Inline images should primarily be **illustrations, infographics, and diagrams** in the Bookbot style (defined by the reference illustration). Only use photographic style for inline images when the content specifically calls for it (e.g., a photo of a child reading). When in doubt, default to illustration.
+
 For each image placement in the article (3–6 images):
-1. Decide whether the image should be photographic or illustration based on the content it accompanies
-2. Construct a prompt tied to the surrounding article content using the appropriate template from `image-generation.md`
-3. For illustrations, include the `reference-illustration.webp` as inline data in the API call so Gemini matches the Bookbot style
+1. Default to **illustration** style. Only choose photographic if the content specifically requires a photo.
+2. Construct a prompt tied to the surrounding article content using the illustration template from `image-generation.md`
+3. Include the `reference-illustration.webp` as inline data in the API call so Gemini matches the Bookbot style
 4. Call the Gemini API to generate the image (2K, appropriate aspect ratio)
-5. Save to `/assets/updates/[descriptive-name].png`
-6. Insert the markdown image reference at the appropriate location:
+5. Save to `assets/updates/[descriptive-name].png`
+6. Insert the markdown image reference using the Hugo production path (NOT the local path):
    ```markdown
    ![Descriptive alt text](/images/updates/descriptive-name.png)
    ```
@@ -388,8 +392,9 @@ Generate an HTML preview file so the reviewer can see the article with images re
 
 1. Parse the article's YAML front matter and article body
 2. Map every image path from Hugo format to the local file path:
-   - Hugo path: `/images/updates/filename.png`
-   - Local path: the actual path where the image was saved during generation (e.g., `/tmp/assets/updates/filename.png`)
+   - Hugo path in article: `/images/updates/filename.png`
+   - Local path for HTML `src`: `assets/updates/filename.png` (relative to the working directory where the HTML file is saved)
+   - The mapping is simple: replace `/images/updates/` with `assets/updates/`
 3. Write an HTML file to the working directory named `[slug]-preview.html` using this template:
 
 ```html

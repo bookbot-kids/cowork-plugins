@@ -10,6 +10,22 @@ This command is the entry point for the Bookbot blog writing workflow. When invo
 
 ---
 
+## Pre-flight: Verify Configuration
+
+Before starting, check that all required environment variables are set:
+
+```bash
+echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}"
+```
+
+If any variable shows as empty (not "set"), stop and tell the user:
+
+> Some required configuration is missing. Please run `/setup` first to configure your API keys and author details.
+
+Do NOT proceed with the workflow until all three variables are confirmed set.
+
+---
+
 ## Step 1: Gather Input
 
 Ask the employee:
