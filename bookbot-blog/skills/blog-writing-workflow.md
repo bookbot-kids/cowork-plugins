@@ -469,7 +469,7 @@ gh api --method POST repos/bookbot-kids/bookbot-www/pulls \
   "title": "New blog post: [Short Title]",
   "head": "blog/[slug]",
   "base": "main",
-  "body": "## New Blog Post\n\n**Title:** [Full Article Title]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies\n\n### Quality Tests\nAll 6 automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin v1.0.0"
+  "body": "## New Blog Post\n\n**Title:** [Full Article Title]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies\n\n### Quality Tests\nAll 6 automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin (read version from marketplace.json at publish time)"
 }
 EOF
 ```

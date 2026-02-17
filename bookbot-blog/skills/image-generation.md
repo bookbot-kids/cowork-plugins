@@ -52,7 +52,7 @@ Hugo processes the hero image eagerly (no lazy load) at full viewport width with
 | Property | Value |
 |----------|-------|
 | Style | Photographic or Illustration (choose per image) |
-| Aspect ratio | Flexible — choose the most appropriate (3:2, 4:3, 1:1, 16:9, etc.) |
+| Aspect ratio | Choose from supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` |
 | Resolution | 2K |
 | Format | PNG |
 | File path | `/assets/updates/[descriptive-name].png` |
@@ -206,7 +206,7 @@ curl -s -X POST \
   }'
 ```
 
-Adjust the `aspectRatio` for inline images as needed (e.g., `"3:2"`, `"4:3"`, `"1:1"`).
+Adjust the `aspectRatio` for inline images. Supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`.
 
 ### Illustration Images (with style reference)
 
@@ -239,7 +239,7 @@ For illustrations, include the reference image as base64 inline data so Gemini m
      }'
    ```
 
-Adjust the `aspectRatio` per image as appropriate.
+Adjust the `aspectRatio` per image. Supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`.
 
 ### Handling the Response
 

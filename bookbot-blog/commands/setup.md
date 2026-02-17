@@ -109,7 +109,20 @@ If the user is a new author, they can create a new slug (lowercase, hyphenated, 
 
 ## Setting Environment Variables
 
-For each missing variable, give the user the exact command to set it persistently:
+For each missing variable, **you MUST persist it to the shell profile** so it survives across sessions and plugin updates. Do NOT just run `export` — that only lasts for the current session.
+
+### macOS / Linux
+
+Run BOTH commands — the first persists it, the second loads it for this session:
+```bash
+echo 'export VARIABLE_NAME="the-value"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**After writing, verify it was persisted** by checking it exists in the file:
+```bash
+grep VARIABLE_NAME ~/.zshrc
+```
 
 ### Windows (PowerShell)
 
@@ -118,13 +131,6 @@ For each missing variable, give the user the exact command to set it persistentl
 ```
 
 Tell the user they need to **restart their terminal** (or Claude Code) after running this for the change to take effect.
-
-### macOS / Linux
-
-```bash
-echo 'export VARIABLE_NAME="the-value"' >> ~/.zshrc
-source ~/.zshrc
-```
 
 ---
 
