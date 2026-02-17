@@ -20,6 +20,11 @@ Write in Sanchari's researcher-experimenter voice as defined in `voice-guide.md`
 
 Execute the following workflow to generate a publication-ready blog article from research topic to final output with automated quality testing and self-correction.
 
+### RULES
+
+- Any run that produces or modifies images **MUST** end with an HTML preview file (`[slug]-preview.html`) for visual review. See Step 5.1 for the template.
+- Every image generation API call **MUST** be followed by a cost report showing the per-image cost ($0.135) and cumulative session total. See Step 3.5.3.
+
 ### INPUT REQUIREMENTS
 
 Required:
@@ -219,7 +224,21 @@ For each image placement in the article (3–6 images):
    ![Descriptive alt text](/images/updates/descriptive-name.png)
    ```
 
-Images are reviewed as part of the Phase 5 review loop. If the reviewer requests changes, regenerate with updated prompts.
+#### Step 3.5.3: Report Image Generation Cost
+
+After all images are generated, calculate and report the cost:
+
+- **Gemini 3 Pro Image pricing:** $0.134 per 2K image (output), ~$0.001 per image (input)
+- **Per image cost:** ~$0.135
+- **Formula:** total images generated × $0.135
+
+Present the cost summary immediately after generation:
+
+> **Image generation cost:** [N] images × $0.135 = **$[total]**
+
+Track a running total across the session — if images are regenerated during the review loop (Step 5.2), add those to the cumulative total and report the updated cost.
+
+Images are reviewed as part of the Phase 5 review loop. If the reviewer requests changes, regenerate with updated prompts and update the running cost total.
 
 ---
 
@@ -414,7 +433,7 @@ Generate an HTML preview file so the reviewer can see the article with images re
 ```
 
 4. Use the Read tool to display the HTML file in the conversation, so the reviewer sees a rendered preview
-5. Also include: process documentation summary (test results, metrics), suggested category placement, and any flagged issues
+5. Also include: process documentation summary (test results, metrics), suggested category placement, cumulative image generation cost, and any flagged issues
 
 **Important:** The `.md` article file is the source of truth. Never modify its Hugo image paths. The HTML preview is disposable — it is NOT published.
 
@@ -627,6 +646,9 @@ Bookbot mentions: [number]
 Hero image: [prompt used]
 Inline images: [number] — [prompts used for each]
 All alt text: [list]
+Image generation cost: [N] images × $0.135 = $[total]
+Regenerations: [number, if any] — additional cost: $[amount]
+Total image cost: $[cumulative total]
 
 ---
 
@@ -658,6 +680,7 @@ Preview URL: [url]
 | Voice authenticity | Pass | [result] | Pass/Fail |
 | SEO keywords | Natural | [result] | Pass/Fail |
 | Bookbot integration | 2–4 mentions | [number] | Pass/Fail |
+| Image gen cost | — | $[total] | — |
 | Hero image | Generated | [result] | Pass/Fail |
 | Inline images | 3–6 | [number] | Pass/Fail |
 ```
