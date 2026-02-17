@@ -366,7 +366,7 @@ If tests still failing after 3 cycles, output article with detailed error report
 Present the complete article to the reviewer inline in the conversation:
 
 1. Output the full article content as rendered markdown
-2. Read each generated image file (hero + all inline) using the Read tool so they display visually in the conversation
+2. **Display each image visually:** Read each generated image file (hero + all inline) using the Read tool so they display inline in the conversation. The markdown image paths (e.g., `/images/updates/filename.png`) are Hugo production paths and won't resolve in preview — you must use the Read tool with the actual local file path (e.g., `/tmp/assets/updates/filename.png`) to show the images. Do NOT change the Hugo paths in the article file — they are correct for production.
 3. Include: process documentation summary (test results, metrics), suggested category placement, and any flagged issues
 
 #### Step 5.2: Iterate on Feedback

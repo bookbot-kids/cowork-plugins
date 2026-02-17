@@ -191,14 +191,14 @@ No gradients, no 3D. Clear and readable. High quality.
 
 ```bash
 curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent" \
   -H "x-goog-api-key: $GEMINI_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "contents": [{"parts": [{"text": "PROMPT_HERE"}]}],
     "generationConfig": {
       "responseModalities": ["IMAGE", "TEXT"],
-      "imageSizeOptions": {
+      "imageConfig": {
         "aspectRatio": "16:9",
         "imageSize": "2K"
       }
@@ -221,7 +221,7 @@ For illustrations, include the reference image as base64 inline data so Gemini m
 2. Include it in the API call:
    ```bash
    curl -s -X POST \
-     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
+     "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent" \
      -H "x-goog-api-key: $GEMINI_API_KEY" \
      -H "Content-Type: application/json" \
      -d '{
@@ -231,7 +231,7 @@ For illustrations, include the reference image as base64 inline data so Gemini m
        ]}],
        "generationConfig": {
          "responseModalities": ["IMAGE", "TEXT"],
-         "imageSizeOptions": {
+         "imageConfig": {
            "aspectRatio": "4:3",
            "imageSize": "2K"
          }
