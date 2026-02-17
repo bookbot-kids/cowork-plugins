@@ -200,8 +200,8 @@ After the article is written and before quality testing, generate images followi
 #### Step 3.5.1: Generate Hero Image
 
 1. Analyze the article's main theme, key visual concepts, and emotional tone
-2. Construct a hero image prompt using the template in `image-generation.md`
-3. Call the `gpt-image-1` MCP server to generate the image (1536x1024px, PNG)
+2. Construct a photographic hero image prompt using the template in `image-generation.md`
+3. Call the Gemini API to generate the image (16:9, 2K, photographic)
 4. Save to `/assets/updates/[slug].png` (filename matches article slug)
 5. Write descriptive alt text
 6. Set `image: "/images/updates/[slug].png"` in the YAML front matter
@@ -209,23 +209,17 @@ After the article is written and before quality testing, generate images followi
 #### Step 3.5.2: Generate Inline Images
 
 For each image placement in the article (3–6 images):
-1. Construct a prompt tied to the surrounding article content
-2. Generate the image via MCP (minimum 1200px wide, PNG or JPEG)
-3. Save to `/assets/updates/[descriptive-name].png`
-4. Insert the markdown image reference at the appropriate location:
+1. Decide whether the image should be photographic or illustration based on the content it accompanies
+2. Construct a prompt tied to the surrounding article content using the appropriate template from `image-generation.md`
+3. For illustrations, include the `reference-illustration.webp` as inline data in the API call so Gemini matches the Bookbot style
+4. Call the Gemini API to generate the image (2K, appropriate aspect ratio)
+5. Save to `/assets/updates/[descriptive-name].png`
+6. Insert the markdown image reference at the appropriate location:
    ```markdown
    ![Descriptive alt text](/images/updates/descriptive-name.png)
    ```
 
-#### Step 3.5.3: Present Images for Review
-
-Show the reviewer:
-- Each generated image (hero + all inline)
-- The prompt used to generate each
-- The alt text
-- Placement in the article
-
-Wait for approval or revision requests before proceeding to Phase 4.
+Images are reviewed as part of the Phase 5 review loop. If the reviewer requests changes, regenerate with updated prompts.
 
 ---
 
@@ -367,28 +361,33 @@ If tests still failing after 3 cycles, output article with detailed error report
 
 ### PHASE 5: REVIEW & PUBLISHING
 
-#### Step 5.1: Present for Review
+#### Step 5.1: Preview & Review
 
-Present the complete article to the reviewer in the conversation:
-- Full article content (rendered markdown)
-- Hero image and all inline images
-- Process documentation summary (test results, metrics)
-- Suggested category placement
-- Any issues that required manual review flagged
+Present the complete article to the reviewer inline in the conversation:
+
+1. Output the full article content as rendered markdown
+2. Read each generated image file (hero + all inline) using the Read tool so they display visually in the conversation
+3. Include: process documentation summary (test results, metrics), suggested category placement, and any flagged issues
 
 #### Step 5.2: Iterate on Feedback
 
-The reviewer may request changes. For each revision:
-1. Apply the requested changes
-2. Re-run any affected quality tests
-3. Present the updated version
-4. Repeat until the reviewer approves
+The reviewer may request changes to the text, images, or both. For each round of feedback:
 
-Wait for explicit approval ("looks good", "approve", "publish it", or similar).
+**Text changes:**
+1. Edit the article as requested
+2. Re-run any affected quality tests
+3. Re-show the preview (full article + images)
+
+**Image changes:**
+1. Regenerate the specific image(s) with an updated prompt via the Gemini API (see `image-generation.md`)
+2. Save the new image, replacing the old file
+3. Re-show the preview (full article + images)
+
+Repeat until the reviewer gives explicit approval ("looks good", "approve", "publish it", or similar).
 
 #### Step 5.3: Publish to Hugo Repository
 
-Once approved, publish the article to the `bookbot-www` Hugo website repository:
+Once approved, publish the article to the `bookbot-kids/bookbot-www` Hugo website repository (local clone at `$BOOKBOT_WWW_PATH`):
 
 **Branch Strategy:**
 - Create a new branch: `blog/[slug]` (e.g., `blog/should-child-use-ai-homework`)
@@ -427,7 +426,7 @@ gh pr create \
   --body "## New Blog Post
 
 **Title:** [Full Article Title]
-**Author:** Sanchari
+**Author:** $BOOKBOT_AUTHOR
 **Category:** [category or root]
 **Sources:** [N] peer-reviewed studies
 
@@ -472,7 +471,7 @@ heading: "[Article Title]"
 slug: "[slug]"
 date: YYYY-MM-DD
 image: "/images/updates/[slug].png"
-author: "sanchari"
+author: "$BOOKBOT_AUTHOR"
 category: "[category-folder-name]"
 description: "[150–160 character meta description]"
 sitemap:

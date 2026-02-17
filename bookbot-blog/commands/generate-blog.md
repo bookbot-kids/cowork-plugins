@@ -37,7 +37,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Execute each phase
 2. **Phase 1** — Research gathering
 3. **Phase 2** — Evidence organization
 4. **Phase 3** — Article generation (using `voice-guide.md` and `hugo-output-spec.md`)
-5. **Phase 3.5** — Image generation (using `image-generation.md` and the `gpt-image-1` MCP server)
+5. **Phase 3.5** — Image generation (using `image-generation.md` and the Gemini API)
 6. **Phase 4** — Quality testing with self-correction
 7. **Phase 5** — Review, iteration, and publishing
 

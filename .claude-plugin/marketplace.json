@@ -1,0 +1,21 @@
+{
+  "name": "cowork-plugins",
+  "owner": {
+    "name": "Bookbot"
+  },
+  "plugins": [
+    {
+      "name": "bookbot-blog",
+      "source": "./bookbot-blog",
+      "description": "Generate publication-ready, research-backed blog posts for the Bookbot website with automated quality testing, image generation, and Hugo/GitHub publishing.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Bookbot"
+      },
+      "keywords": ["blog", "content", "hugo"]
+    }
+  ],
+  "metadata": {
+    "description": "Bookbot team plugins for Claude Code"
+  }
+}

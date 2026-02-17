@@ -41,7 +41,7 @@ content/updates/
 | `get-the-most-out-of-bookbot/` | Tips for Parents | Motivation, learning techniques, Bookbot usage |
 | `how-do-children-learn-to-read/` | Science of Reading | Phonics, decoding, fluency, literacy instruction |
 
-Sanchari's research-backed articles will typically go in `how-do-children-learn-to-read/` or at the root level, depending on topic fit.
+Research-backed articles will typically go in `how-do-children-learn-to-read/`. Bookbot tips go in `get-the-most-out-of-bookbot/`. Use the root level for announcements, awards, and topics that don't fit a category.
 
 ---
 
@@ -76,7 +76,7 @@ heading: "Article Title Here"
 slug: "article-slug-here"
 date: YYYY-MM-DD
 image: "/images/updates/hero-image-name.png"
-author: "sanchari"
+author: "$BOOKBOT_AUTHOR"
 category: "how-do-children-learn-to-read"
 description: "Compelling meta description for SEO and card previews."
 sitemap:
@@ -94,7 +94,7 @@ sitemap:
 | `slug` | Yes | URL-friendly identifier. Lowercase, hyphenated. Must match the filename (without `.md`). |
 | `date` | Yes | ISO format: `YYYY-MM-DD`. Use the publication/generation date. |
 | `image` | Yes | Hero image path: `/images/updates/[name].png`. This path maps to `/assets/updates/[name].png`. |
-| `author` | Yes | Author slug in kebab-case. For Sanchari, use `"sanchari"`. Links to `/content/authors/sanchari.md`. |
+| `author` | Yes | Use the value of `$BOOKBOT_AUTHOR` env var (set during `/setup`). Links to `/content/authors/[author].md`. |
 | `category` | Conditional | Required if the post lives inside a subcategory folder. Value must match the folder name exactly (e.g., `"how-do-children-learn-to-read"`). Omit for root-level posts. |
 | `description` | Yes | Meta description for SEO and card preview. Compelling, not clickbait. Aim for 150–160 characters. |
 | `sitemap.priority` | Yes | Always `0.5` for individual posts. |
@@ -224,9 +224,11 @@ Author, G. H. (Year). Article title. *Journal Name*. https://full-url-here
 
 ## Author Setup
 
-Sanchari needs an author profile at `/content/authors/sanchari.md` and a photo at `/assets/authors/sanchari.jpeg` (or `.png`). The author file format matches existing authors on the site.
+Each author needs a profile at `/content/authors/[author-slug].md` and a photo at `/assets/authors/[author-slug].jpeg` (or `.png`).
 
-If the author file doesn't exist yet, create it as part of the first article publish. Reference existing author files (e.g., `adrian-dewitts.md`, `belinda-moore.md`) for the exact format.
+Known authors: `adrian-dewitts`, `belinda-moore`, `debs-moir`, `jenni-mills`, `shelly-dollosa`, `sanchari`.
+
+If the `$BOOKBOT_AUTHOR` doesn't have an author file yet, create one as part of the first article publish. Reference existing author files for the exact format.
 
 ---
 
@@ -242,7 +244,7 @@ Process documentation files are NOT published to the Hugo site. They are stored 
 
 ## Publishing & Deployment
 
-- **Repository:** `bookbot-www` (the Hugo site repo)
+- **Repository:** `bookbot-kids/bookbot-www` (the Hugo site repo, local path in `$BOOKBOT_WWW_PATH`)
 - **Production:** Pushes to `main` branch trigger auto-deploy to https://www.bookbotkids.com/
 - **Preview:** Branch deploys generate preview URLs
 - **Build command:** `hugo --minify`
