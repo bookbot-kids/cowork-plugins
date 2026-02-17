@@ -438,10 +438,7 @@ Repeat until the reviewer gives explicit approval ("looks good", "approve", "pub
 
 Once approved, publish the article directly to `bookbot-kids/bookbot-www` via the GitHub API. No local clone is needed.
 
-**Auth detection:** Check which GitHub auth method is available:
-1. Run `gh auth status` — if it succeeds, use `gh api` commands
-2. Otherwise, check if `GITHUB_TOKEN` env var is set — if so, use `curl` with Bearer token
-3. If neither, ask the user to run `/setup`
+**Auth check:** Verify `GITHUB_TOKEN` env var is set. If not, ask the user to run `/setup`.
 
 **Files to publish:**
 1. Article: `content/updates/[category]/[slug].md` (or `content/updates/[slug].md` if root-level)
@@ -450,79 +447,84 @@ Once approved, publish the article directly to `bookbot-kids/bookbot-www` via th
 4. Process documentation: save locally only (NOT published)
 5. HTML preview: delete after publishing (NOT published)
 
-**Publishing workflow (GitHub Git Data API):**
+**Publishing workflow (GitHub Git Data API via `curl`):**
 
-The Git Data API is used instead of the Contents API because it supports files up to 100MB (Contents API has a 1MB limit, too small for 2K images).
-
-All examples below use `gh api`. If the user authenticated with a PAT instead, replace `gh api` calls with equivalent `curl` calls using `-H "Authorization: Bearer $GITHUB_TOKEN"`.
+The Git Data API is used instead of the Contents API because it supports files up to 100MB (Contents API has a 1MB limit, too small for 2K images). All calls use `curl` with the `GITHUB_TOKEN` env var — no `gh` CLI needed.
 
 ```bash
+REPO="bookbot-kids/bookbot-www"
+AUTH="Authorization: Bearer $GITHUB_TOKEN"
+
 # Step 1: Get the SHA of the main branch
-MAIN_SHA=$(gh api repos/bookbot-kids/bookbot-www/git/ref/heads/main --jq '.object.sha')
+MAIN_SHA=$(curl -s -H "$AUTH" \
+  https://api.github.com/repos/$REPO/git/ref/heads/main \
+  | jq -r '.object.sha')
 
 # Step 2: Create the blog branch
-gh api --method POST repos/bookbot-kids/bookbot-www/git/refs \
-  -f ref="refs/heads/blog/[slug]" \
-  -f sha="$MAIN_SHA"
+curl -s -X POST -H "$AUTH" \
+  -d "{\"ref\":\"refs/heads/blog/[slug]\",\"sha\":\"$MAIN_SHA\"}" \
+  https://api.github.com/repos/$REPO/git/refs
 
 # Step 3: Get the base tree SHA
-BASE_TREE=$(gh api repos/bookbot-kids/bookbot-www/git/commits/$MAIN_SHA --jq '.tree.sha')
+BASE_TREE=$(curl -s -H "$AUTH" \
+  https://api.github.com/repos/$REPO/git/commits/$MAIN_SHA \
+  | jq -r '.tree.sha')
 
 # Step 4: Create a blob for each file (base64-encoded)
 # For the article:
-ARTICLE_BLOB=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/blobs \
-  -f content="$(base64 -i /path/to/article.md)" \
-  -f encoding="base64" \
-  --jq '.sha')
+ARTICLE_BLOB=$(curl -s -X POST -H "$AUTH" \
+  -d "{\"content\":\"$(base64 -i /path/to/article.md)\",\"encoding\":\"base64\"}" \
+  https://api.github.com/repos/$REPO/git/blobs \
+  | jq -r '.sha')
 
 # For each image:
-HERO_BLOB=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/blobs \
-  -f content="$(base64 -i /path/to/hero.png)" \
-  -f encoding="base64" \
-  --jq '.sha')
+HERO_BLOB=$(curl -s -X POST -H "$AUTH" \
+  -d "{\"content\":\"$(base64 -i /path/to/hero.png)\",\"encoding\":\"base64\"}" \
+  https://api.github.com/repos/$REPO/git/blobs \
+  | jq -r '.sha')
 # Repeat for each inline image...
 
 # Step 5: Create a tree with all the blobs
-TREE_SHA=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/trees \
-  --input - --jq '.sha' <<EOF
-{
-  "base_tree": "$BASE_TREE",
-  "tree": [
-    {"path": "content/updates/[category]/[slug].md", "mode": "100644", "type": "blob", "sha": "$ARTICLE_BLOB"},
-    {"path": "assets/updates/[slug].png", "mode": "100644", "type": "blob", "sha": "$HERO_BLOB"},
-    {"path": "assets/updates/[inline-1].png", "mode": "100644", "type": "blob", "sha": "$INLINE1_BLOB"},
-    {"path": "assets/updates/[inline-2].png", "mode": "100644", "type": "blob", "sha": "$INLINE2_BLOB"}
-  ]
-}
-EOF
-)
+TREE_SHA=$(curl -s -X POST -H "$AUTH" \
+  -d "{
+    \"base_tree\":\"$BASE_TREE\",
+    \"tree\":[
+      {\"path\":\"content/updates/[category]/[slug].md\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$ARTICLE_BLOB\"},
+      {\"path\":\"assets/updates/[slug].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$HERO_BLOB\"},
+      {\"path\":\"assets/updates/[inline-1].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE1_BLOB\"},
+      {\"path\":\"assets/updates/[inline-2].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE2_BLOB\"}
+    ]
+  }" \
+  https://api.github.com/repos/$REPO/git/trees \
+  | jq -r '.sha')
 
 # Step 6: Create a commit
-COMMIT_SHA=$(gh api --method POST repos/bookbot-kids/bookbot-www/git/commits \
-  --input - --jq '.sha' <<EOF
-{
-  "message": "Add blog post: [Article Title]\n\n- [word count] words, [reading time] min read\n- [number] research sources cited\n- All quality tests passed",
-  "tree": "$TREE_SHA",
-  "parents": ["$MAIN_SHA"]
-}
-EOF
-)
+COMMIT_SHA=$(curl -s -X POST -H "$AUTH" \
+  -d "{
+    \"message\":\"Add blog post: [Article Title]\n\n- [word count] words, [reading time] min read\n- [number] research sources cited\n- All quality tests passed\",
+    \"tree\":\"$TREE_SHA\",
+    \"parents\":[\"$MAIN_SHA\"]
+  }" \
+  https://api.github.com/repos/$REPO/git/commits \
+  | jq -r '.sha')
 
 # Step 7: Update the branch ref to point to the new commit
-gh api --method PATCH repos/bookbot-kids/bookbot-www/git/refs/heads/blog/[slug] \
-  -f sha="$COMMIT_SHA"
+curl -s -X PATCH -H "$AUTH" \
+  -d "{\"sha\":\"$COMMIT_SHA\"}" \
+  https://api.github.com/repos/$REPO/git/refs/heads/blog/[slug]
 
 # Step 8: Create a pull request
-gh api --method POST repos/bookbot-kids/bookbot-www/pulls \
-  --input - <<EOF
-{
-  "title": "New blog post: [Short Title]",
-  "head": "blog/[slug]",
-  "base": "main",
-  "body": "## New Blog Post\n\n**Title:** [Full Article Title]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies\n\n### Quality Tests\nAll 6 automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin (read version from marketplace.json at publish time)"
-}
-EOF
+curl -s -X POST -H "$AUTH" \
+  -d "{
+    \"title\":\"New blog post: [Short Title]\",
+    \"head\":\"blog/[slug]\",
+    \"base\":\"main\",
+    \"body\":\"## New Blog Post\n\n**Title:** [Full Article Title]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies\n\n### Quality Tests\nAll 6 automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin (read version from marketplace.json at publish time)\"
+  }" \
+  https://api.github.com/repos/$REPO/pulls
 ```
+
+**Dependencies:** `curl` and `jq` are required. Both are pre-installed on macOS and most Linux distributions. On Windows, both are available via PowerShell or WSL.
 
 **Error handling:**
 - If any API call fails, show the error to the reviewer and suggest running `/setup` to verify credentials
