@@ -71,13 +71,13 @@ Reject and replace these vague forms:
 
 ## Jargon Translation Rules
 
-Add "—meaning [plain language]" immediately after ANY technical term.
+Add a plain-language translation immediately after ANY technical term. Use commas, parentheses, or "which means" to introduce the translation. **Never use em-dashes (—).**
 
 ### Examples
-- "1.5 standard deviations below the mean—meaning they're reading significantly behind their peers"
-- "effect sizes averaging 0.99—meaning children who received intervention made significantly more progress than those who didn't"
+- "1.5 standard deviations below the mean, meaning they're reading significantly behind their peers"
+- "effect sizes averaging 0.99 (meaning children who received intervention made significantly more progress than those who didn't)"
 - "correlate at .603, which means about 36% of reading performance depends on..."
-- "p < 10⁻⁸—meaning the result is extremely reliable"
+- "p < 10⁻⁸, meaning the result is extremely reliable"
 - "cognitive offloading, which means letting the AI do the thinking instead of using it as a tool to support their own thinking"
 
 ### Technical Terms That Must Always Be Translated
@@ -107,7 +107,7 @@ When mentioning Bookbot in articles:
 
 1. **After brain/neuroscience findings:** "This is exactly what we're working on at Bookbot and Flinders University..."
 2. **After timing/early intervention data:** "At Bookbot, I analyze real reading data from thousands of children to identify early warning signs..."
-3. **In strategies section:** "This is one reason we built Bookbot—to make daily, intensive practice actually engaging..."
+3. **In strategies section:** "This is one reason we built Bookbot: to make daily, intensive practice actually engaging..."
 4. **In conclusion:** "That's what my research at Bookbot and Flinders focuses on..."
 
 ---
@@ -121,11 +121,36 @@ When mentioning Bookbot in articles:
 
 ---
 
+## Event Article Voice
+
+Event articles (conferences, workshops, community activities) use the **author's own voice** rather than Sanchari's researcher persona. The author is whoever is set in `$BOOKBOT_AUTHOR`.
+
+### Event Voice Markers — Use These
+- Warm, engaging, first-person where appropriate ("We were thrilled to...", "It was incredible to see...")
+- Celebratory or reflective tone matching the event
+- Concrete details: who was there, what happened, what it felt like
+- Connect the event to Bookbot's mission naturally
+
+### Event Voice — Still Avoid
+- All AI-sounding phrases (same list as research articles)
+- Overly maternal language ("your little one", "sweet reader", "kiddos")
+- Corporate speak ("leveraging synergies", "key stakeholders")
+- Generic filler ("It was an amazing event" — say WHY it was amazing)
+
+### Event Quality Standards
+- Grade 8–10 reading level (same as research)
+- Short paragraphs (2–4 sentences)
+- Translate any technical terms for a parent audience
+- No citation specificity rules (no research citations needed)
+- Bookbot mentions are informational, not salesy
+
+---
+
 ## Applying This Guide to Other Content Types
 
-This voice guide is the single source of truth for Sanchari's writing persona. It applies to:
-- Blog posts (primary use)
-- Social media posts (shorter form, same voice)
+This voice guide is the single source of truth for Bookbot content voice. It applies to:
+- Research blog posts (Sanchari's researcher-experimenter voice)
+- Event blog posts (author's own voice — see Event Article Voice above)
+- Social media posts (shorter form, same voice principles)
 - Newsletter content
 - Parent guides and resources
-- Any public-facing Bookbot content written in Sanchari's voice

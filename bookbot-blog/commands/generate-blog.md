@@ -1,6 +1,6 @@
 # /generate-blog
 
-Generate a publication-ready, research-backed blog post for the Bookbot website.
+Generate a publication-ready blog post for the Bookbot website.
 
 ---
 
@@ -30,24 +30,37 @@ Do NOT proceed with the workflow until all three variables are confirmed set.
 
 Ask the employee:
 
+> **What type of article is this?**
+>
+> 1. **Research** — Evidence-based article backed by peer-reviewed studies *(default)*
+> 2. **Event** — Coverage of an event, workshop, or community activity with your own photos
+>
 > **What topic would you like to write about?**
 >
 > You can provide any of the following:
 > - A general topic (e.g., "supporting struggling readers", "phonemic awareness")
 > - An article URL you'd like to translate for a parent audience
 > - A research paper URL or DOI
+> - *(Event only)* Event name, date, location, and key details
 >
 > Optionally, include any SEO keywords you'd like the article to target.
 
 Wait for their response. Extract:
-- **TOPIC**: The topic, URL, or DOI provided
+- **ARTICLE_TYPE**: "research" (default) or "event"
+- **TOPIC**: The topic, URL, DOI, or event details provided
 - **SEO_KEYWORDS**: Any keywords mentioned (may be empty)
+
+**If ARTICLE_TYPE is "event"**, also gather:
+- **Event details**: Name, date, location, who attended, what happened, why it matters
+- **Photos**: Accept file paths shared in the conversation, or look for image files in the working directory. Ask: "Do you have photos to include? You can share file paths or drop them into the working directory."
 
 ---
 
 ## Step 2: Execute the Blog Writing Workflow
 
-Read and follow the `blog-writing-workflow.md` skill in full. Execute each phase in order:
+Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_TYPE` to the workflow — it controls which phases are executed.
+
+**Research articles** — all phases:
 
 1. **Phase 0** — Keyword optimization (if no keywords provided)
 2. **Phase 1** — Research gathering
@@ -55,6 +68,16 @@ Read and follow the `blog-writing-workflow.md` skill in full. Execute each phase
 4. **Phase 3** — Article generation (using `voice-guide.md` and `hugo-output-spec.md`)
 5. **Phase 3.5** — Image generation (using `image-generation.md` and the Gemini API)
 6. **Phase 4** — Quality testing with self-correction
+7. **Phase 5** — Review, iteration, and publishing
+
+**Event articles** — modified phases:
+
+1. **Phase 0** — Keyword optimization (if no keywords provided)
+2. ~~Phase 1~~ — *Skipped* (no research needed)
+3. **Phase 2E** — Photo & content inventory (replaces evidence organization)
+4. **Phase 3** — Article generation (event structure, author's voice)
+5. **Phase 3.5E** — Photo processing (replaces AI image generation)
+6. **Phase 4** — Quality testing (event-adapted tests)
 7. **Phase 5** — Review, iteration, and publishing
 
 ---
