@@ -11,6 +11,9 @@ Check that all required configuration is in place, and guide the user through fi
 | 1 | `GEMINI_API_KEY` | Image generation via Gemini API |
 | 2 | `GITHUB_TOKEN` | Publishing articles to bookbot-www via GitHub API |
 | 3 | `BOOKBOT_AUTHOR` | Author slug for article front matter |
+| 4 | `DATAFORSEO_AUTH` | DataForSEO API credentials (Base64 encoded `login:password`) for keyword and FAQ research |
+
+Variables 1–3 are required. Variable 4 is optional but enables real keyword search volume data and live "People Also Ask" FAQs in Phase 0. Without it, both fall back to AI-generated suggestions.
 
 All variables are stored in `.claude/settings.local.json` (gitignored, per-machine). They persist across sessions, sandbox restarts, and plugin updates automatically.
 
@@ -64,6 +67,21 @@ Show existing authors for reference:
 
 If the user is a new author, they can create a new slug (lowercase, hyphenated, e.g., `first-last`).
 
+### 1d. DATAFORSEO_AUTH
+
+Check: `echo "${DATAFORSEO_AUTH:+set}"`
+
+This is optional. If missing, keyword research and FAQ research in Phase 0 will use AI-generated suggestions instead of real data.
+
+If the user wants real keyword and FAQ data, ask them for their DataForSEO Base64 auth string. This is the Base64 encoding of `login:password` and can be found or generated from their DataForSEO account at https://app.dataforseo.com/api-access.
+
+If they only have their login and password, generate the token for them:
+```bash
+echo -n "their-login@email.com:their-password" | base64
+```
+
+Save the resulting string as `DATAFORSEO_AUTH`.
+
 ---
 
 ## Saving Variables
@@ -79,7 +97,8 @@ Target format:
   "env": {
     "GEMINI_API_KEY": "the-key",
     "GITHUB_TOKEN": "the-token",
-    "BOOKBOT_AUTHOR": "the-slug"
+    "BOOKBOT_AUTHOR": "the-slug",
+    "DATAFORSEO_AUTH": "base64-encoded-login:password"
   }
 }
 ```
@@ -96,18 +115,23 @@ After saving all variables, re-check each one to confirm it's set:
 echo $GEMINI_API_KEY
 echo $GITHUB_TOKEN
 echo $BOOKBOT_AUTHOR
+echo "${DATAFORSEO_AUTH:+set}"
 ```
 
-Once all checks pass, confirm:
+Once the required checks pass (variables 1–3), confirm:
 
 > Setup complete. You're ready to use `/generate-blog`.
+
+If DataForSEO credentials are also set, add:
+
+> DataForSEO keyword and FAQ research is enabled. Phase 0 will use real search data.
 
 ---
 
 ## Notes
 
 - Never log or echo back the full API key value. When confirming a key is set, show only the first 5 characters followed by `...` (e.g., `AIza...`).
-- For `GITHUB_TOKEN`, same rule — show only the first 5 characters followed by `...`.
+- For `GITHUB_TOKEN` and `DATAFORSEO_AUTH`, same rule — show only the first 5 characters followed by `...`.
 - For `BOOKBOT_AUTHOR`, confirm the full value since it's not sensitive.
 - No local repository clone is needed — articles are published directly via the GitHub API.
 - Do NOT write variables to `~/.zshrc` or shell profiles — use `.claude/settings.local.json` only.

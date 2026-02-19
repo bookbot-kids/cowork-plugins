@@ -96,13 +96,10 @@ After presenting the article and images:
 
 Once approved:
 
-1. Create a `blog/[slug]` branch in the `bookbot-www` Hugo website repository
-2. Commit the article (`.md` file) to `content/updates/[category]/` and images to `assets/updates/`
-3. Push the branch and open a pull request
-4. Post a confirmation message with:
-   - The PR link
-   - The preview URL (branch deploy)
-   - The production URL (once merged)
+1. Commit the article (`.md` file) and images directly to `main` in the `bookbot-www` Hugo website repository
+2. Post a confirmation message with:
+   - The commit link
+   - The production URL (live after auto-deploy)
 
 ---
 

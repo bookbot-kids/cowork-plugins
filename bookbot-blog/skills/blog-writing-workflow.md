@@ -39,7 +39,6 @@ Required:
 - **TOPIC**: General topic, article URL, research paper URL/DOI, or event details
 
 Optional:
-- **SEO_KEYWORDS**: 1–12 keywords for natural integration (if not provided, proceed to Phase 0)
 - **CATEGORY**: Which subcategory the article belongs in (if not provided, suggest one)
 
 Event-only:
@@ -47,17 +46,23 @@ Event-only:
 
 ---
 
-### PHASE 0: KEYWORD OPTIMIZATION
+### PHASE 0: KEYWORD & FAQ RESEARCH
 
-If SEO_KEYWORDS not provided, ask user:
+> **Event articles:** Skip this phase entirely. Event articles do not use keyword targeting or FAQs. Omit `keyword`, `secondaryKeywords`, and `faqs` from the front matter. Proceed directly to Phase 2E.
 
-"Would you like me to suggest SEO keywords based on the research topic? I can analyze the research and suggest 8–12 relevant keywords for natural integration."
+Run this phase automatically immediately after gathering input. Do not ask the user whether to run it.
 
-Options:
-1. **Yes, suggest keywords** — Generate and present 8–12 keyword suggestions (3–4 primary, 4–6 long-tail, 1–2 supporting), await approval/modification
-2. **No, skip keywords** — Write naturally without keyword optimization
+#### Step 0.1: Keyword Research
 
-If keywords approved, use them in Phase 3. If no keywords, write with natural topic-relevant language.
+Read and execute `keyword-research.md`. Extract the core 2–3 word phrase from the topic as the keyword input (e.g., from "why some kids struggle to read" extract "kids reading struggles"). Present the suggested `keyword:` and `secondaryKeywords:` front matter and wait for the user to approve or adjust before proceeding.
+
+Once approved, carry these keywords forward — they inform the article title, headings, and body throughout Phase 3.
+
+#### Step 0.2: FAQ Research
+
+Read and execute `faq-research.md` using the approved primary keyword from Step 0.1. Pull "People Also Ask" questions from the Google SERP and write well-researched answers for each selected question. Do not rely solely on the PAA snippet as the answer — treat the PAA question as the question to answer and write a thorough, evidence-based response drawing on reading science knowledge and, where needed, web research. Present the suggested `faqs:` front matter and wait for the user to approve or adjust.
+
+Both steps use the same keyword — extract it once and reuse it.
 
 ---
 
@@ -638,9 +643,11 @@ Once approved, publish the article directly to `bookbot-kids/bookbot-www` via th
 4. Process documentation: save locally only (NOT published)
 5. HTML preview: delete after publishing (NOT published)
 
-**Publishing workflow (GitHub Git Data API via `curl`):**
+**Publishing workflow (GitHub Git Data API):**
 
-The Git Data API is used instead of the Contents API because it supports files up to 100MB (Contents API has a 1MB limit, too small for 2K images). All calls use `curl` with the `GITHUB_TOKEN` env var — no `gh` CLI needed.
+The Git Data API is used instead of the Contents API because it supports files up to 100MB (Contents API has a 1MB limit, too small for 2K images). All calls use `curl` with the `GITHUB_TOKEN` env var. Articles are committed **directly to `main`** (no branch or PR).
+
+**Important:** For image blobs, the base64 data is too large for curl's command-line argument limit. Always write the JSON payload to a temp file and use `curl -d @file`.
 
 ```bash
 REPO="bookbot-kids/bookbot-www"
@@ -648,35 +655,34 @@ AUTH="Authorization: token $GITHUB_TOKEN"
 
 # Step 1: Get the SHA of the main branch
 MAIN_SHA=$(curl -s -H "$AUTH" \
-  https://api.github.com/repos/$REPO/git/ref/heads/main \
+  https://api.github.com/repos/$REPO/git/refs/heads/main \
   | jq -r '.object.sha')
 
-# Step 2: Create the blog branch
-curl -s -X POST -H "$AUTH" \
-  -d "{\"ref\":\"refs/heads/blog/[slug]\",\"sha\":\"$MAIN_SHA\"}" \
-  https://api.github.com/repos/$REPO/git/refs
-
-# Step 3: Get the base tree SHA
+# Step 2: Get the base tree SHA
 BASE_TREE=$(curl -s -H "$AUTH" \
   https://api.github.com/repos/$REPO/git/commits/$MAIN_SHA \
   | jq -r '.tree.sha')
 
-# Step 4: Create a blob for each file (base64-encoded)
-# For the article:
-ARTICLE_BLOB=$(curl -s -X POST -H "$AUTH" \
-  -d "{\"content\":\"$(base64 -i /path/to/article.md)\",\"encoding\":\"base64\"}" \
+# Step 3: Create a blob for each file
+# Use temp files for the JSON payload to avoid argument length limits.
+
+# For the article (text files are small enough for inline, but use temp file for consistency):
+echo "{\"content\":\"$(base64 -i /path/to/article.md)\",\"encoding\":\"base64\"}" > /tmp/blob-article.json
+ARTICLE_BLOB=$(curl -s -X POST -H "$AUTH" -H "Content-Type: application/json" \
+  -d @/tmp/blob-article.json \
   https://api.github.com/repos/$REPO/git/blobs \
   | jq -r '.sha')
 
-# For each image:
-HERO_BLOB=$(curl -s -X POST -H "$AUTH" \
-  -d "{\"content\":\"$(base64 -i /path/to/hero.png)\",\"encoding\":\"base64\"}" \
+# For each image (MUST use temp file — images are too large for inline args):
+echo "{\"content\":\"$(base64 -i /path/to/hero.png)\",\"encoding\":\"base64\"}" > /tmp/blob-hero.json
+HERO_BLOB=$(curl -s -X POST -H "$AUTH" -H "Content-Type: application/json" \
+  -d @/tmp/blob-hero.json \
   https://api.github.com/repos/$REPO/git/blobs \
   | jq -r '.sha')
-# Repeat for each inline image...
+# Repeat for each inline image, using a separate temp file each time...
 
-# Step 5: Create a tree with all the blobs
-TREE_SHA=$(curl -s -X POST -H "$AUTH" \
+# Step 4: Create a tree with all the blobs
+TREE_SHA=$(curl -s -X POST -H "$AUTH" -H "Content-Type: application/json" \
   -d "{
     \"base_tree\":\"$BASE_TREE\",
     \"tree\":[
@@ -689,43 +695,36 @@ TREE_SHA=$(curl -s -X POST -H "$AUTH" \
   https://api.github.com/repos/$REPO/git/trees \
   | jq -r '.sha')
 
-# Step 6: Create a commit
-COMMIT_SHA=$(curl -s -X POST -H "$AUTH" \
+# Step 5: Create a commit on main
+COMMIT_SHA=$(curl -s -X POST -H "$AUTH" -H "Content-Type: application/json" \
   -d "{
-    \"message\":\"Add blog post: [Article Title]\n\n- [word count] words, [reading time] min read\n- [number] research sources cited\n- All quality tests passed\",
+    \"message\":\"Add blog post: [Article Title]\n\nType: [Research / Event]\nAuthor: $BOOKBOT_AUTHOR\n[word count] words, [reading time] min read\nAll quality tests passed\",
     \"tree\":\"$TREE_SHA\",
     \"parents\":[\"$MAIN_SHA\"]
   }" \
   https://api.github.com/repos/$REPO/git/commits \
   | jq -r '.sha')
 
-# Step 7: Update the branch ref to point to the new commit
-curl -s -X PATCH -H "$AUTH" \
+# Step 6: Update main to point to the new commit
+curl -s -X PATCH -H "$AUTH" -H "Content-Type: application/json" \
   -d "{\"sha\":\"$COMMIT_SHA\"}" \
-  https://api.github.com/repos/$REPO/git/refs/heads/blog/[slug]
+  https://api.github.com/repos/$REPO/git/refs/heads/main
 
-# Step 8: Create a pull request
-curl -s -X POST -H "$AUTH" \
-  -d "{
-    \"title\":\"New blog post: [Short Title]\",
-    \"head\":\"blog/[slug]\",
-    \"base\":\"main\",
-    \"body\":\"## New Blog Post\n\n**Title:** [Full Article Title]\n**Type:** [Research / Event]\n**Author:** $BOOKBOT_AUTHOR\n**Category:** [category or root]\n**Sources:** [N] peer-reviewed studies (research) or [N] event photos (event)\n\n### Quality Tests\nAll automated tests passed.\n\n### Preview\nOnce merged, this will be live at: https://www.bookbotkids.com/updates/[category]/[slug]/\n\n---\nGenerated with the Bookbot Blog Plugin (read version from marketplace.json at publish time)\"
-  }" \
-  https://api.github.com/repos/$REPO/pulls
+# Step 7: Clean up temp files
+rm -f /tmp/blob-*.json
 ```
 
-**Dependencies:** `curl` and `jq` are required. Both are pre-installed on macOS and most Linux distributions. On Windows, both are available via PowerShell or WSL.
+**Dependencies:** `curl` and `jq` are required. Both are pre-installed on macOS and most Linux distributions.
 
 **Error handling:**
 - If any API call fails, show the error to the reviewer and suggest running `/setup` to verify credentials
-- If the branch already exists (409 conflict), ask the reviewer if they want to update the existing branch or create a new one with a suffix
+- If the main branch SHA has changed since Step 1 (422 error on ref update), re-fetch the latest SHA and retry from Step 1
 
 #### Step 5.4: Confirm Publication
 
 After publishing, provide confirmation:
-- PR link (from the create PR response)
-- Production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (once merged to main)
+- Commit link: `https://github.com/bookbot-kids/bookbot-www/commit/[COMMIT_SHA]`
+- Production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (live after auto-deploy completes)
 
 ---
 
@@ -747,11 +746,25 @@ image: "/images/updates/[slug].png"
 author: "$BOOKBOT_AUTHOR"
 category: "[category-folder-name]"
 description: "[150–160 character meta description]"
+keyword: "[primary keyword from Phase 0, or omit if no keywords provided]"
+secondaryKeywords:
+  - "[secondary keyword 1]"
+  - "[secondary keyword 2]"
+faqs:
+  - question: "[Question 1]"
+    answer: "[Answer 1]"
+  - question: "[Question 2]"
+    answer: "[Answer 2]"
+  - question: "[Question 3]"
+    answer: "[Answer 3]"
 sitemap:
   priority: 0.5
   changefreq: "monthly"
 ---
 ```
+
+**Research articles:** Include `keyword`, `secondaryKeywords`, and `faqs` from Phase 0.
+**Event articles:** Omit `keyword`, `secondaryKeywords`, and `faqs` entirely — these fields are not used for event articles.
 
 Followed by the article body (H1 title, then content) with inline images throughout and a references section at the end.
 

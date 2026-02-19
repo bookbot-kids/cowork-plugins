@@ -79,6 +79,20 @@ image: "/images/updates/hero-image-name.png"
 author: "$BOOKBOT_AUTHOR"
 category: "how-do-children-learn-to-read"
 description: "Compelling meta description for SEO and card previews."
+keyword: "phonemic awareness activities"
+secondaryKeywords:
+  - "phonemic awareness"
+  - "phonemic awareness games"
+  - "phonemic awareness for kindergarten"
+  - "phonemic awareness exercises"
+  - "phonological awareness activities"
+faqs:
+  - question: "What is phonemic awareness?"
+    answer: "Phonemic awareness is the ability to hear, identify, and manipulate individual sounds (phonemes) in spoken words. It is one of the strongest predictors of reading success — children who can isolate and blend phonemes before entering school are significantly more likely to become fluent readers."
+  - question: "How is phonemic awareness different from phonics?"
+    answer: "Phonemic awareness is purely oral — it's about sounds, not letters. Phonics connects those sounds to written letters. Think of phonemic awareness as the foundation: children need to hear that *cat* has three sounds (/k/ /æ/ /t/) before they can reliably map those sounds to the letters c, a, and t."
+  - question: "At what age should phonemic awareness develop?"
+    answer: "Most children develop basic phonemic awareness between ages 4 and 6. By the end of kindergarten, children typically recognise rhymes and can isolate beginning sounds. By the end of first grade, they can blend and segment individual phonemes. Children who are still struggling by mid-first grade benefit from targeted intervention early."
 sitemap:
   priority: 0.5
   changefreq: "monthly"
@@ -97,8 +111,24 @@ sitemap:
 | `author` | Yes | Use the value of `$BOOKBOT_AUTHOR` env var (set during `/setup`). Links to `/content/authors/[author].md`. |
 | `category` | Conditional | Required if the post lives inside a subcategory folder. Value must match the folder name exactly (e.g., `"how-do-children-learn-to-read"`). Omit for root-level posts. |
 | `description` | Yes | Meta description for SEO and card preview. Compelling, not clickbait. Aim for 150–160 characters. |
+| `keyword` | Yes | The single primary keyword this article targets. Plain string, no quotes needed. Used for SEO targeting. |
+| `secondaryKeywords` | Yes | YAML list of secondary keywords (related terms, long-tail variants). Aim for 4–8 entries. These inform article body and title optimisation without keyword-stuffing. |
+| `faqs` | Yes | YAML list of FAQ objects rendered by the Hugo template below the article body. Each entry requires `question` (string) and `answer` (string). Answers support markdown — use links, bold, and italic freely. Aim for 3–5 entries, each answer 2–4 sentences. See **FAQ Guidelines** below. |
 | `sitemap.priority` | Yes | Always `0.5` for individual posts. |
 | `sitemap.changefreq` | Yes | Always `"monthly"` for individual posts. |
+
+### FAQ Guidelines
+
+The `faqs` list is rendered by the Hugo template as a structured FAQ section below the article body. It also outputs FAQ schema markup for Google rich results.
+
+**Format rules:**
+- Each entry is a YAML object with `question:` and `answer:` keys — both quoted strings
+- Answers support full markdown: `[link text](/path/)`, `**bold**`, `*italic*`, inline citations
+- Use internal links (e.g., `/updates/how-do-children-learn-to-read/what-are-decodable-books/`) where relevant articles exist
+- Use external links for research citations within answers where appropriate
+- Do NOT duplicate the FAQ section in the article body markdown — the template renders it automatically from this field
+- Aim for 3–5 questions that a parent or teacher would realistically search
+- Each answer should be 2–4 sentences — concise and scannable
 
 ### Title & Heading Guidelines
 
@@ -144,6 +174,7 @@ The existing site does **not** use these fields in front matter — do not inclu
 - `seo_keywords`
 - `reading_time`
 - `draft`
+- `keywords` (use `keyword` singular for primary, and `secondaryKeywords` for the list)
 
 ---
 
@@ -170,6 +201,8 @@ After the front matter, the article body is standard Markdown starting with an H
 
 [Citations with links]
 ```
+
+**Do NOT add a FAQ section to the article body markdown.** The Hugo template renders the FAQ section automatically from the `faqs` front matter field, appended below the article content.
 
 ### Heading Hierarchy
 - `#` (H1): Article title — used once at the top of the body
