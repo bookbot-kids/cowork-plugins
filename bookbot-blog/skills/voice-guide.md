@@ -122,12 +122,17 @@ When mentioning Bookbot in articles:
 
 ---
 
-## Reading Level Target
+## Prose Style & Structure
 
-- Grade 8–10 reading level
-- Paragraphs: 2–4 sentences maximum
-- No dense academic paragraphs
-- Prefer short, direct sentences over compound-complex ones
+**Reading level:** Grade 8–10. Prefer short, direct sentences over compound-complex ones. No dense academic paragraphs.
+
+**Paragraph cadence — the most important rule:** Vary paragraph lengths deliberately to create natural rhythm. Mix short standalone sentences (even a single sentence) with longer 3–5 sentence paragraphs that develop an idea. Avoid uniformity — let the pacing breathe. A one-sentence paragraph does a lot of work precisely because everything around it is longer. For example: *"But there are other benefits to students reading aloud."* earns its place as a standalone line because it pivots the reader's attention before the next block of evidence.
+
+**Prose flow:** Ideas build naturally from one paragraph to the next — each paragraph earns its place by either advancing the argument, adding evidence, or shifting the reader's attention to a new angle. Use short bridging sentences (1–2 sentences) to pivot between sections rather than relying on subheadings or bullet points. These act as signposts without breaking the essay-like flow.
+
+**Evidence and personal reflection:** Weave research and personal observation together — don't front-load all the evidence, then all the personal story. Let them alternate to keep the reader engaged.
+
+**Ending:** Close with a brief personal note that loops back to the practical, grounding the piece in lived experience rather than a formal summary.
 
 ---
 
@@ -149,7 +154,7 @@ Event articles (conferences, workshops, community activities) use the **author's
 
 ### Event Quality Standards
 - Grade 8–10 reading level (same as research)
-- Short paragraphs (2–4 sentences)
+- Varied paragraph cadence (same as research — see Prose Style & Structure)
 - Translate any technical terms for a parent audience
 - No citation specificity rules (no research citations needed)
 - Bookbot mentions are informational, not salesy
