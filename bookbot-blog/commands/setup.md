@@ -13,7 +13,7 @@ Check that all required configuration is in place, and guide the user through fi
 | 3 | `BOOKBOT_AUTHOR` | Author slug for article front matter |
 | 4 | `DATAFORSEO_AUTH` | DataForSEO API credentials (Base64 encoded `login:password`) for keyword and FAQ research |
 
-Variables 1–3 are required. Variable 4 is optional but enables real keyword search volume data and live "People Also Ask" FAQs in Phase 0. Without it, both fall back to AI-generated suggestions.
+All 4 variables are required.
 
 All variables are stored in `.claude/settings.local.json` (gitignored, per-machine). They persist across sessions, sandbox restarts, and plugin updates automatically.
 
@@ -71,9 +71,7 @@ If the user is a new author, they can create a new slug (lowercase, hyphenated, 
 
 Check: `echo "${DATAFORSEO_AUTH:+set}"`
 
-This is optional. If missing, keyword research and FAQ research in Phase 0 will use AI-generated suggestions instead of real data.
-
-If the user wants real keyword and FAQ data, ask them for their DataForSEO Base64 auth string. This is the Base64 encoding of `login:password` and can be found or generated from their DataForSEO account at https://app.dataforseo.com/api-access.
+If missing, ask the user for their DataForSEO Base64 auth string. This is the Base64 encoding of `login:password` and can be found or generated from their DataForSEO account at https://app.dataforseo.com/api-access.
 
 If they only have their login and password, generate the token for them:
 ```bash
@@ -118,13 +116,9 @@ echo $BOOKBOT_AUTHOR
 echo "${DATAFORSEO_AUTH:+set}"
 ```
 
-Once the required checks pass (variables 1–3), confirm:
+Once all checks pass, confirm:
 
 > Setup complete. You're ready to use `/generate-blog`.
-
-If DataForSEO credentials are also set, add:
-
-> DataForSEO keyword and FAQ research is enabled. Phase 0 will use real search data.
 
 ---
 

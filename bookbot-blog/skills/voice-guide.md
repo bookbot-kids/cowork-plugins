@@ -94,6 +94,16 @@ Add a plain-language translation immediately after ANY technical term. Use comma
 
 ---
 
+## Bookbot Product Knowledge
+
+Bookbot is an early-years reading support app designed for children in the first years of school (roughly K–3). It combines a structured, evidence-based reading program with built-for-purpose AI so children can practise reading aloud and get immediate feedback.
+
+The app uses speech recognition to listen as a child reads, helps them stay on track, and supports decoding and fluency practice. It pairs this with a large set of levelled, phonics-aligned books and activities, and adapts what a child sees next based on their performance. Bookbot can be used at home or in classrooms, with multiple child profiles, and is built to work in low-connectivity settings as well as typical online environments.
+
+Use this product knowledge as the factual basis when writing Bookbot mentions. Do not invent features or make claims beyond what is described here.
+
+---
+
 ## Bookbot Integration Voice
 
 When mentioning Bookbot in articles:

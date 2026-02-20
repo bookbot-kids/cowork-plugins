@@ -588,6 +588,11 @@ Generate an HTML preview file so the reviewer can see the article with images re
     a { color: #6366f1; }
     .meta { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
     .badge { display: inline-block; background: #e0e7ff; color: #4338ca; padding: 2px 10px; border-radius: 12px; font-size: 13px; margin-right: 6px; }
+    .faq-section { margin-top: 48px; border-top: 2px solid #e5e7eb; padding-top: 32px; }
+    .faq-section h2 { color: #1a1a1a; margin-bottom: 24px; }
+    .faq-item { margin-bottom: 24px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; }
+    .faq-item h3 { margin: 0 0 10px 0; font-size: 1em; color: #1a1a1a; }
+    .faq-item p { margin: 0; color: #374151; }
   </style>
 </head>
 <body>
@@ -604,6 +609,16 @@ Generate an HTML preview file so the reviewer can see the article with images re
   <img class="hero" src="[local hero image path]" alt="[hero alt text]">
 
   [Article body converted to HTML — convert markdown headings, paragraphs, bold, italic, lists, links, and images. Replace all image src values with local file paths.]
+
+  [If the front matter includes a `faqs` block, render it here:]
+  <div class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    [For each FAQ entry:]
+    <div class="faq-item">
+      <h3>[question]</h3>
+      <p>[answer — render any markdown links as HTML anchor tags]</p>
+    </div>
+  </div>
 
 </body>
 </html>

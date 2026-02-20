@@ -15,14 +15,14 @@ This command is the entry point for the Bookbot blog writing workflow. When invo
 Before starting, check that all required environment variables are set:
 
 ```bash
-echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}"
+echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}" "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}"
 ```
 
 If any variable shows as empty (not "set"), stop and tell the user:
 
 > Some required configuration is missing. Please run `/setup` first to configure your API keys and author details.
 
-Do NOT proceed with the workflow until all three variables are confirmed set.
+Do NOT proceed with the workflow until all four variables are confirmed set.
 
 ---
 
@@ -43,12 +43,9 @@ Ask the employee:
 > - A research paper URL or DOI
 > - *(Event only)* Event name, date, location, and key details
 >
-> Optionally, include any SEO keywords you'd like the article to target.
-
 Wait for their response. Extract:
 - **ARTICLE_TYPE**: "research" (default) or "event"
 - **TOPIC**: The topic, URL, DOI, or event details provided
-- **SEO_KEYWORDS**: Any keywords mentioned (may be empty)
 
 **If ARTICLE_TYPE is "event"**, also gather:
 - **Event details**: Name, date, location, who attended, what happened, why it matters
@@ -62,7 +59,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_
 
 **Research articles** — all phases:
 
-1. **Phase 0** — Keyword optimization (if no keywords provided)
+1. **Phase 0** — Keyword & FAQ research
 2. **Phase 1** — Research gathering
 3. **Phase 2** — Evidence organization
 4. **Phase 3** — Article generation (using `voice-guide.md` and `hugo-output-spec.md`)
@@ -72,7 +69,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_
 
 **Event articles** — modified phases:
 
-1. **Phase 0** — Keyword optimization (if no keywords provided)
+1. ~~Phase 0~~ — *Skipped* (event articles skip keyword & FAQ research)
 2. ~~Phase 1~~ — *Skipped* (no research needed)
 3. **Phase 2E** — Photo & content inventory (replaces evidence organization)
 4. **Phase 3** — Article generation (event structure, author's voice)

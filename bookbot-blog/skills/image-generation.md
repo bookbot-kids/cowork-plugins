@@ -17,16 +17,19 @@ Every article gets:
 2. **Inline images** (required, 3–6) — placed throughout the article body between paragraphs, either photographic or illustration
 
 ### Types of Inline Images
-Based on existing articles, inline images serve several purposes:
-- **Scene-setting photos** — children reading, parents with kids, classroom moments
-- **Diagrams and infographics** — comparing concepts, showing processes (use illustration style)
+
+Inline images are **illustrations by default**. Only use photographic inline images in exceptional cases where a real scene is genuinely more effective than an illustration (e.g., a photo of a specific classroom environment the article is about).
+
+Illustrations serve most purposes:
+- **Diagrams and infographics** — comparing concepts, showing processes, side-by-side comparisons
 - **Section heading illustrations** — visual breaks that introduce a new topic
 - **Concept illustrations** — making abstract ideas (like brain development or phonics) visual
+- **Step-by-step visuals** — numbered flows, checklists, timelines
 
 ### Choosing Photographic vs. Illustration
 
-- **Photographic**: Use for scenes with people, environments, and emotional moments. Warm, natural, editorial style.
-- **Illustration**: Use for diagrams, infographics, concept explanations, comparisons, and process flows. Uses the Bookbot flat illustration style (see below).
+- **Hero only → Photographic**: The hero image is always a warm, editorial photo.
+- **Inline → Illustration (default)**: Use the Bookbot flat infographic style for virtually all inline images. Reserve photographic inline images for cases where a real scene adds something an illustration cannot.
 
 ---
 
@@ -51,7 +54,7 @@ Hugo processes the hero image eagerly (no lazy load) at full viewport width with
 
 | Property | Value |
 |----------|-------|
-| Style | Photographic or Illustration (choose per image) |
+| Style | Illustration (default); photographic only in exceptional cases |
 | Aspect ratio | Choose from supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` |
 | Resolution | 2K |
 | Format | PNG |
