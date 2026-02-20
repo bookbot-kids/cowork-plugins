@@ -100,9 +100,23 @@ Illustrations must match the Bookbot flat infographic style. A reference image i
 - Solid saturated color fills — orange, cyan, red, green, yellow, purple
 - Thick black outlines around all shapes
 - Clean bold sans-serif text labels centered in shapes
-- Warm cream/beige background
+- Solid brand background color (choose one randomly per image — see palette below)
 - No gradients, no shadows, no 3D effects
 - Diagrammatic and clear, designed for parent/teacher audiences
+
+### Background Color Palette
+
+For each illustration, randomly select one background color from this brand palette:
+
+| Name | Hex |
+|------|-----|
+| Pale yellow | `#FFF4A8` |
+| Mint green | `#C3EFD0` |
+| Soft peach | `#FDC1B0` |
+| Sky blue | `#A8ECFF` |
+| Lavender | `#D6BAFF` |
+
+Pick a different color for each illustration in the article so they vary visually.
 
 ### Style Keywords for Illustration Prompts
 Include these in every illustration prompt:
@@ -110,7 +124,7 @@ Include these in every illustration prompt:
 - "bold geometric shapes"
 - "solid color fills with black outlines"
 - "educational diagram"
-- "warm cream background"
+- "[chosen background color] solid background" (e.g., "pale yellow #FFF4A8 solid background")
 - "clean sans-serif text labels"
 
 ---
@@ -151,10 +165,12 @@ Generate an illustration in the exact same visual style as the reference image.
 A flat educational infographic showing [concept from article].
 [Specific elements to include: labels, comparisons, flow].
 Bold geometric shapes with solid color fills and black outlines.
-Clean sans-serif text labels. Warm cream background.
+Clean sans-serif text labels. [Chosen background color, e.g. "Pale yellow #FFF4A8"] solid background.
 No gradients, no 3D. Clear and readable.
 High quality.
 ```
+
+Pick a different background color from the brand palette for each illustration in the article.
 
 ### Example Prompts
 
@@ -182,7 +198,7 @@ A flat educational infographic comparing two teaching methods side by side.
 Left section with key features of synthetic phonics,
 right section with analytic phonics features.
 Bold geometric shapes with solid color fills and black outlines.
-Clean sans-serif labels. Warm cream background.
+Clean sans-serif labels. Sky blue #A8ECFF solid background.
 No gradients, no 3D. Clear and readable. High quality.
 ```
 
