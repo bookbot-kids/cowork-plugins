@@ -132,30 +132,36 @@ The `faqs` list is rendered by the Hugo template as a structured FAQ section bel
 
 ### Title & Heading Guidelines
 
-The `title` (SEO title) and `heading` (H1 displayed on the page) must be crafted deliberately. The H1 in the article body (`# ...`) should match the `heading` field.
+The `title` (SEO title) and `heading` (H1 displayed on the page) serve different purposes and must be crafted deliberately for each role. The Hugo template renders the H1 heading from the `heading` front matter field — do NOT include an H1 in the article body.
+
+**The core distinction:**
+- **`title`** is the *out-of-context* label — what appears in the browser tab, Google SERP, and bookmarks. Optimise for CTR and clarity. Users have no surrounding context when they read it.
+- **`heading`** is the *in-context* promise — the H1 the user reads after landing on the page. Prioritise reassurance and readability. It can breathe a little more than the title.
+- Both must be **complementary, not contradictory** — they must express the same intent and topic. A user who clicks the title must feel the heading confirms they're in the right place.
 
 **Audience:** Parents and teachers of children ages 5–9 (Grades K–3). Use American English spelling. Do not include any brand name in either field.
 
 **Inputs to consider:**
-- The article's primary keyword
+- The article's primary keyword and the user's search intent behind it
 - Any secondary keywords (up to 5)
-- The article summary/outline
 - The article format (how-to, guide, checklist, explainer, comparison, etc.)
 - The key takeaway or promise of the article
 
 #### Title rules (`title` field — the SEO title)
 - Front-load the main topic — put the primary keyword near the start
 - Aim for 50–60 characters; keep it concise and specific
-- Include the primary keyword (or a close variant) exactly once
+- Include the primary keyword (or a close variant) exactly once — naturally, not forced
 - Use secondary keywords only if they fit naturally — never keyword-stuff
-- Avoid filler words: "ultimate," "best," "complete," "everything you need" — unless the article genuinely delivers on that promise
+- Avoid boilerplate and filler: "ultimate," "best," "complete," "everything you need" — unless the article genuinely delivers on that promise
+- No misleading claims — keep it aligned with actual page content to reduce Google title rewrites
 - No quotes, no ALL CAPS
 
 #### Heading rules (`heading` field — the display H1)
-- Human-friendly and clear; can be slightly longer than the title
+- Prioritise user reassurance — the reader has just clicked; confirm they're in the right place
+- Can be slightly longer and more natural than the title
 - Include the primary keyword (or a close variant) exactly once
-- Must express the same intent as the title, but not be identical to it
-- If useful, include a parent/teacher framing like "for Grades K–3" or "for Ages 5–9," but only when it reads naturally
+- Must match the same intent as the title, but not be word-for-word identical
+- If useful, add a parent/teacher framing like "for Grades K–3" or "for Ages 5–9" — only when it reads naturally
 
 #### Example
 
@@ -180,11 +186,9 @@ The existing site does **not** use these fields in front matter — do not inclu
 
 ## Article Body Format
 
-After the front matter, the article body is standard Markdown starting with an H1 title.
+After the front matter, the article body is standard Markdown. Do NOT include an H1 — the Hugo template renders the heading from the `heading` front matter field automatically.
 
 ```markdown
-# [Article Title]
-
 [Opening paragraphs — the hook]
 
 ![Descriptive alt text](/images/updates/image-name.png)
@@ -205,8 +209,7 @@ After the front matter, the article body is standard Markdown starting with an H
 **Do NOT add a FAQ section to the article body markdown.** The Hugo template renders the FAQ section automatically from the `faqs` front matter field, appended below the article content.
 
 ### Heading Hierarchy
-- `#` (H1): Article title — used once at the top of the body
-- `##` (H2): Major sections
+- `##` (H2): Major sections — the highest level used in the article body (no H1)
 - `###` (H3): Subsections (use sparingly)
 - Never skip heading levels
 

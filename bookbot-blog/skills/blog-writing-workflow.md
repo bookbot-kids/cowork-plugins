@@ -286,8 +286,8 @@ If keywords provided:
 - Title: 1–2 primary keywords
 - First paragraph: 1 primary keyword
 - Subheadings: 2–3 keywords total
-- Body: Distribute remaining keywords naturally
-- Never force keywords — if it sounds unnatural, skip it
+- Body: Each secondary keyword must appear at least once in the article body — use them naturally where they fit, not forced
+- Never force keywords — if it sounds unnatural, find a nearby sentence where it fits organically instead
 
 If no keywords provided:
 - Write naturally with topic-relevant terms
@@ -454,6 +454,7 @@ If FAIL:
 Check:
 - [ ] Title under 70 characters
 - [ ] Primary keyword in title (if keywords provided)
+- [ ] Each secondary keyword appears at least once in the article body
 - [ ] Keywords integrated naturally (no keyword stuffing detected)
 - [ ] No robotic phrasing: "If you're looking for X or Y or Z..."
 - [ ] Description compelling and 150–160 characters
@@ -505,7 +506,7 @@ Check:
 - [ ] 5–7 practical strategies provided
 - [ ] References section complete with all sources cited in article
 - [ ] YAML front matter complete (all fields per `hugo-output-spec.md`)
-- [ ] H1 heading present at top of body matching the article title
+- [ ] No H1 in article body (heading rendered by Hugo template from front matter)
 - [ ] Hero image generated and referenced in front matter as `/images/updates/[slug].png`
 - [ ] 3–6 inline images placed throughout article body
 - [ ] Alt text present for all images
@@ -516,7 +517,7 @@ Check:
 - [ ] Length: 500–1000 words (events can be shorter)
 - [ ] All sections present: Hook, Highlights, Impact, Looking Ahead
 - [ ] YAML front matter complete (all fields per `hugo-output-spec.md`)
-- [ ] H1 heading present at top of body matching the article title
+- [ ] No H1 in article body (heading rendered by Hugo template from front matter)
 - [ ] Hero photo selected and referenced in front matter as `/images/updates/[slug].png`
 - [ ] 3–6 event photos placed throughout article body
 - [ ] Alt text present for all photos with event context
@@ -781,7 +782,7 @@ sitemap:
 **Research articles:** Include `keyword`, `secondaryKeywords`, and `faqs` from Phase 0.
 **Event articles:** Omit `keyword`, `secondaryKeywords`, and `faqs` entirely — these fields are not used for event articles.
 
-Followed by the article body (H1 title, then content) with inline images throughout and a references section at the end.
+Followed by the article body (no H1 — starts directly with content) with inline images throughout and a references section at the end.
 
 ### OUTPUT 2: Images
 
