@@ -15,14 +15,14 @@ This command is the entry point for the Bookbot blog writing workflow. When invo
 Before starting, check that all required environment variables are set:
 
 ```bash
-echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}" "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}"
+echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}" "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}" "FACEBOOK_PAGE_TOKEN=${FACEBOOK_PAGE_TOKEN:+set}" "FACEBOOK_PAGE_ID=${FACEBOOK_PAGE_ID:+set}" "INSTAGRAM_ACCOUNT_ID=${INSTAGRAM_ACCOUNT_ID:+set}" "PINTEREST_TOKEN=${PINTEREST_TOKEN:+set}" "PINTEREST_BOARD_ID=${PINTEREST_BOARD_ID:+set}" "LINKEDIN_TOKEN=${LINKEDIN_TOKEN:+set}" "LINKEDIN_ORG_ID=${LINKEDIN_ORG_ID:+set}"
 ```
 
 If any variable shows as empty (not "set"), stop and tell the user:
 
-> Some required configuration is missing. Please run `/setup` first to configure your API keys and author details.
+> Some required configuration is missing. Please run `/setup` first to configure your API keys, author details, and social media credentials.
 
-Do NOT proceed with the workflow until all four variables are confirmed set.
+Do NOT proceed with the workflow until all 11 variables are confirmed set.
 
 ---
 
@@ -66,6 +66,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_
 5. **Phase 3.5** — Image generation (using `image-generation.md` and the Gemini API)
 6. **Phase 4** — Quality testing with self-correction
 7. **Phase 5** — Review, iteration, and publishing
+8. **Phase 6** — Social media posting (Facebook, Instagram, Pinterest, LinkedIn)
 
 **Event articles** — modified phases:
 
@@ -76,6 +77,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_
 5. **Phase 3.5E** — Photo processing (replaces AI image generation)
 6. **Phase 4** — Quality testing (event-adapted tests)
 7. **Phase 5** — Review, iteration, and publishing
+8. **Phase 6** — Social media posting (Facebook, Instagram, Pinterest, LinkedIn)
 
 ---
 
@@ -97,6 +99,7 @@ Once approved:
 2. Post a confirmation message with:
    - The commit link
    - The production URL (live after auto-deploy)
+3. Proceed to social media posting (Phase 6) — wait for deployment, select an illustration, generate hooks, get user approval, and post to all four platforms
 
 ---
 

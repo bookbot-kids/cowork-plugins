@@ -744,6 +744,20 @@ After publishing, provide confirmation:
 
 ---
 
+### PHASE 6: SOCIAL MEDIA POSTING
+
+After the article is published and the production URL is confirmed (Step 5.4), post the article to social media.
+
+Read and execute `social-media-posting.md`. Pass forward from the workflow context:
+- Article title, heading, slug, description, and body text
+- Production URL (from Step 5.4)
+- Inline image file paths (from Phase 3.5)
+- Hero image path
+
+The social media skill handles everything: deployment wait, image selection, hook generation, user review, and posting to all four platforms (Facebook, Instagram, Pinterest, LinkedIn).
+
+---
+
 ## OUTPUT
 
 Once ALL tests pass and review is complete, the workflow produces:
@@ -868,6 +882,19 @@ Preview URL: [url]
 
 ---
 
+## PHASE 6: SOCIAL MEDIA POSTING
+
+Image selected: [descriptive-name].png
+Platforms posted: [list]
+
+### Post Links
+- Facebook: [URL]
+- Instagram: Media ID [id]
+- Pinterest: [URL]
+- LinkedIn: [URL]
+
+---
+
 ## METRICS SUMMARY
 
 | Metric | Target | Actual | Status |
@@ -908,6 +935,7 @@ Article is publication-ready when:
 - All images have descriptive alt text
 - Front matter matches `hugo-output-spec.md` exactly
 - Article committed to `bookbot-www` repository
+- Social media posts published to all 4 platforms (Facebook, Instagram, Pinterest, LinkedIn)
 
 ### Event Articles
 
@@ -924,6 +952,7 @@ Article is publication-ready when:
 - All photos have descriptive alt text with event context
 - Front matter matches `hugo-output-spec.md` exactly
 - Article committed to `bookbot-www` repository
+- Social media posts published to all 4 platforms (Facebook, Instagram, Pinterest, LinkedIn)
 
 ---
 
