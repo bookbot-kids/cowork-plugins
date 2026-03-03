@@ -55,11 +55,25 @@ Hugo processes the hero image eagerly (no lazy load) at full viewport width with
 | Property | Value |
 |----------|-------|
 | Style | Illustration (default); photographic only in exceptional cases |
-| Aspect ratio | Choose from supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` |
+| Aspect ratio | **Choose based on content** — see aspect ratio guide below |
 | Resolution | 2K |
 | Format | PNG |
 | File path | `/assets/updates/[descriptive-name].png` |
 | Markdown reference | `![Alt text](/images/updates/[descriptive-name].png)` |
+
+### Illustration Aspect Ratio Guide
+
+Choose the aspect ratio that best fits the diagram's content — do not default to portrait for every illustration:
+
+| Aspect Ratio | When to use |
+|---|---|
+| **16:9 or 21:9** (landscape) | Wide comparisons, timelines, multi-column layouts, horizontal flows |
+| **4:3 or 3:2** (landscape) | Side-by-side comparisons, broad infographics, diagrams with moderate width |
+| **1:1** (square) | Balanced concepts, single-focus diagrams, circular or symmetrical layouts |
+| **4:5 or 3:4** (portrait) | Vertical flows, step-by-step sequences, tall hierarchies or lists |
+| **2:3 or 9:16** (portrait) | Very tall diagrams, narrow step sequences — use sparingly |
+
+Think about the shape of the content first, then pick the ratio that gives it the most natural room.
 
 Hugo auto-converts all inline images to WebP at quality 60 and generates responsive srcset at 480, 768, 1024, 1280px widths. Lazy loading is applied automatically.
 
@@ -68,6 +82,7 @@ Hugo auto-converts all inline images to WebP at quality 60 and generates respons
 ## Visual Style Guide — Photographic Images
 
 ### Overall Aesthetic
+- **Photorealistic** — must look like a real photograph, not AI-generated or illustrated
 - Warm, inviting, editorial photography
 - Modern and clean — not clinical or sterile
 - Diverse representation of children, families, and educators
@@ -75,18 +90,33 @@ Hugo auto-converts all inline images to WebP at quality 60 and generates respons
 - Soft color palette: warm yellows, greens, blues — avoid harsh neons
 
 ### Subject Matter Guidelines
-- Children engaged in reading or learning activities
-- Parent-child reading moments
-- Classrooms and learning environments
-- Books, letters, and literacy-related objects
+
+**Be creative and specific to the article topic.** Do not default to a generic "child reading a book" scene — every article deserves a distinct, imaginative image that reflects its specific theme.
+
+Think about what would make someone stop scrolling. Consider:
+- The article's core concept or surprising finding — can it be shown as a scene?
+- Unexpected but relevant settings (a library, an outdoor market, a kitchen table, a museum, a park)
+- Moments of discovery, curiosity, or connection — not just sitting and reading
+- Close-ups of hands, eyes, objects, or details that evoke the article's theme
+- Environments or situations that haven't been used in recent articles
+
+**Subject ideas (vary across articles):**
+- A child absorbed in a book in an unusual or visually rich location
+- An educator in a dynamic classroom moment
+- A parent-child interaction tied to the article's specific theme
+- Literacy-related objects, environments, or textures used creatively
+- Abstract representations of the article's concept through a real scene
+
+Avoid repeating the same basic composition (e.g., a child sitting at a desk or table reading) across multiple articles.
 
 ### Style Keywords for Photographic Prompts
 Include these in every photographic image prompt:
 - "warm lighting"
 - "educational"
-- "diverse children"
+- "diverse"
 - "photorealistic"
 - "warm, inviting palette"
+- "looks like a real photograph"
 
 ---
 
