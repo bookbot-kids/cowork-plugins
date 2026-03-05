@@ -207,7 +207,7 @@ Select from these categories based on article topic relevance. Prioritise niche 
 | **Niche/topic-specific** | Derived from article topic. E.g., #PhonicsActivities, #DyslexiaSupport, #ReadingResearch, #ScienceOfReading, #PhonemicAwareness, #ReadingIntervention, #DecodableBooks | Targeted reach. Pick 2–4 relevant ones. |
 | **Audience** | #MumsOfInstagram, #TeachersOfInstagram, #HomeschoolMum, #PrimaryTeacher, #KinderTeacher, #ParentsOfReaders | Pick 1–2 relevant ones. |
 
-**Line breaks:** Use `\n` in the caption string. Two `\n\n` creates a visible blank line.
+**Line breaks:** The caption must contain actual newlines (not literal `\n` text). When posting via the API, write the caption to a temp file with real line breaks — see Step 7a.
 
 **Example:**
 
@@ -344,20 +344,12 @@ Wait for explicit approval before posting. If the user requests changes:
 
 Post a photo with the hook text to the Bookbot Facebook Page.
 
-```bash
-curl -s -X POST \
-  "https://graph.facebook.com/v22.0/$FACEBOOK_PAGE_ID/photos" \
-  -F "url=$IMAGE_URL" \
-  -F "message=FACEBOOK_HOOK_TEXT" \
-  -F "access_token=$FACEBOOK_PAGE_TOKEN"
-```
-
-Replace `FACEBOOK_HOOK_TEXT` with the approved Facebook hook (including the article link and hashtags). Use a temp file if the message contains special characters:
+**Important:** Always write the hook text to a temp file first. Do not pass the message inline in the curl command — special characters, newlines, and quotes will break the command. Always use the approved hook for **this** article (not a previous one).
 
 ```bash
-# Write hook text to temp file to avoid shell escaping issues
+# Write the approved Facebook hook text to a temp file
 cat > /tmp/fb-hook.txt << 'HOOKEOF'
-[Facebook hook text here]
+[Facebook hook text for THIS article — include article link and hashtags]
 HOOKEOF
 
 curl -s -X POST \
@@ -396,15 +388,22 @@ Post a photo with caption to the Bookbot Instagram account. Instagram uses a two
 
 ### Step 7a: Create Media Container
 
+**Important:** Write the caption to a temp file with actual newlines — do NOT use literal `\n` text in the string, as the API will display those as visible characters. Always use the approved hook for **this** article.
+
 ```bash
+# Write the approved Instagram caption to a temp file with real line breaks
+cat > /tmp/ig-caption.txt << 'CAPTIONEOF'
+[Instagram hook text for THIS article — with real blank lines between sections, hashtags at the end]
+CAPTIONEOF
+
 curl -s -X POST \
   "https://graph.facebook.com/v22.0/$INSTAGRAM_ACCOUNT_ID/media" \
   --data-urlencode "image_url=$IMAGE_URL" \
-  --data-urlencode "caption=INSTAGRAM_HOOK_TEXT" \
+  --data-urlencode "caption@/tmp/ig-caption.txt" \
   -d "access_token=$FACEBOOK_PAGE_TOKEN"
 ```
 
-Replace `INSTAGRAM_HOOK_TEXT` with the approved Instagram hook. Line breaks in the caption should be literal `\n` characters. Hashtags go directly in the caption text.
+The `caption@/tmp/ig-caption.txt` syntax tells curl to read the caption value from the file and URL-encode it, preserving actual newlines. Hashtags go directly in the caption text.
 
 **Response:**
 
@@ -446,6 +445,8 @@ The `MEDIA_ID` is the Instagram post ID. Instagram does not return a direct URL 
 **Error handling:**
 - If container creation fails, report the error and skip Instagram.
 - If publishing fails (e.g., container not ready), wait an additional 10 seconds and retry once. If it still fails, report and continue.
+
+**Cleanup:** `rm -f /tmp/ig-caption.txt`
 
 ---
 
