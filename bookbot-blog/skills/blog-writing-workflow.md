@@ -626,7 +626,15 @@ Generate an HTML preview file so the reviewer can see the article with images re
 ```
 
 4. Use the Read tool to display the HTML file in the conversation, so the reviewer sees a rendered preview
-5. Also include: process documentation summary (test results, metrics), suggested category placement, cumulative image generation cost, and any flagged issues
+5. Immediately after the preview, list all generated file paths so the reviewer can open them in their editor:
+
+   > **Generated files**
+   > - Article: `content/en/updates/[category]/[slug].md`
+   > - Hero image: `assets/updates/[slug].png`
+   > - Inline images: `assets/updates/[image-1].png`, `assets/updates/[image-2].png`, … _(list each file)_
+   > - Preview: `[slug]-preview.html`
+
+6. Also include: process documentation summary (test results, metrics), suggested category placement, cumulative image generation cost, and any flagged issues
 
 **Important:** The `.md` article file is the source of truth. Never modify its Hugo image paths. The HTML preview is disposable — it is NOT published.
 
@@ -646,18 +654,84 @@ The reviewer may request changes to the text, images, or both. For each round of
 
 Repeat until the reviewer gives explicit approval ("looks good", "approve", "publish it", or similar).
 
-#### Step 5.3: Publish to Hugo Repository
+#### Step 5.3: Localisation (British English + Spanish)
+
+Once the reviewer gives explicit approval (Step 5.2), automatically produce the British English and Spanish variants before publishing. Do not ask — run this step immediately.
+
+##### 5.3a: British English Variant (`en-gb`)
+
+The `en-gb` version is the same article with US spellings swapped to British English. No structural changes, no layout changes — just spelling.
+
+1. Copy the approved English article
+2. Apply US→UK spelling replacements throughout the article body, front matter `title`, `heading`, `description`, and image alt text:
+
+   | US English | British English |
+   |---|---|
+   | -ize (realize, memorize, organize) | -ise (realise, memorise, organise) |
+   | -ization (organization) | -isation (organisation) |
+   | -yze (analyze) | -yse (analyse) |
+   | -or (color, favor, behavior) | -our (colour, favour, behaviour) |
+   | -er (center, fiber) | -re (centre, fibre) |
+   | -ling (traveling, modeling) | -lling (travelling, modelling) |
+   | -ense (defense, license noun) | -ence (defence, licence noun) |
+   | program (non-computing) | programme |
+   | math | maths |
+   | mom | mum |
+
+3. Do NOT change: slug, url, date, author, image paths, YAML keys, markdown links/URLs, technical terms, proper nouns, direct quotes from research papers
+4. Save as `[slug]-en-gb.md` (temporary local name)
+
+##### 5.3b: Spanish Translation
+
+Read and execute `spanish-translation.md`. Using the translation prompt and illustration translation workflow defined there:
+
+**Article translation:**
+1. Submit the full English article `.md` content (including front matter) to the AI
+2. Receive the complete translated `.md` file
+3. Save the Spanish file to the working directory as `[slug]-es.md` (temporary local name)
+
+**Illustration translation:**
+4. For each inline illustration that contains text labels, follow the "Illustration Translation" section in `spanish-translation.md`:
+   - Read the English illustration to identify all text labels
+   - Translate labels following the vocabulary rules
+   - Send the original image + translation mapping to Gemini (see `image-generation.md` "Illustration Translation" API call)
+   - Save as `assets/updates/[descriptive-name]-es.png`
+5. Update the Spanish article's image paths to reference the `-es` illustrations (hero image path stays unchanged)
+6. Report the illustration translation cost (add to running image generation total)
+
+##### 5.3c: Review All Variants
+
+7. Run the post-translation checklist from `spanish-translation.md` for the Spanish version
+8. Display both the British English and Spanish articles (and Spanish illustrations) to the reviewer for a quick check. Ask:
+
+   > **Localised versions are ready.**
+   >
+   > - **British English:** spelling adjustments applied
+   > - **Spanish:** full translation with translated illustrations
+   >
+   > Does everything look good, or would you like any adjustments?
+
+9. If adjustments are needed, revise and re-display
+10. Once approved, proceed to Step 5.4
+
+All three article files and the Spanish illustrations will be committed together in Step 5.4.
+
+
+#### Step 5.4: Publish to Hugo Repository
 
 Once approved, publish the article directly to `bookbot-kids/bookbot-www` via the GitHub API. No local clone is needed.
 
 **Auth check:** Verify `GITHUB_TOKEN` env var is set. If not, ask the user to run `/setup`.
 
 **Files to publish:**
-1. Article: `content/updates/[category]/[slug].md` (or `content/updates/[slug].md` if root-level)
-2. Hero image: `assets/updates/[slug].png`
-3. Inline images: `assets/updates/[descriptive-name].png` (3–6 files)
-4. Process documentation: save locally only (NOT published)
-5. HTML preview: delete after publishing (NOT published)
+1. English (US) article: `content/en/updates/[category]/[slug].md` (or `content/en/updates/[slug].md` if root-level)
+2. English (GB) article: `content/en-gb/updates/[category]/[slug].md` (same subdirectory, same filename)
+3. Spanish article: `content/es/updates/[category]/[slug].md` (same subdirectory, same filename)
+4. Hero image: `assets/updates/[slug].png` (shared between all languages)
+5. English inline illustrations: `assets/updates/[descriptive-name].png` (3–6 files, shared between en and en-gb)
+6. Spanish inline illustrations: `assets/updates/[descriptive-name]-es.png` (one per text-containing illustration)
+7. Process documentation: save locally only (NOT published)
+8. HTML preview: delete after publishing (NOT published)
 
 **Publishing workflow (GitHub Git Data API):**
 
@@ -702,10 +776,14 @@ TREE_SHA=$(curl -s -X POST -H "$AUTH" -H "Content-Type: application/json" \
   -d "{
     \"base_tree\":\"$BASE_TREE\",
     \"tree\":[
-      {\"path\":\"content/updates/[category]/[slug].md\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$ARTICLE_BLOB\"},
+      {\"path\":\"content/en/updates/[category]/[slug].md\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$ARTICLE_BLOB\"},
+      {\"path\":\"content/en-gb/updates/[category]/[slug].md\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$ARTICLE_GB_BLOB\"},
+      {\"path\":\"content/es/updates/[category]/[slug].md\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$ARTICLE_ES_BLOB\"},
       {\"path\":\"assets/updates/[slug].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$HERO_BLOB\"},
       {\"path\":\"assets/updates/[inline-1].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE1_BLOB\"},
-      {\"path\":\"assets/updates/[inline-2].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE2_BLOB\"}
+      {\"path\":\"assets/updates/[inline-1]-es.png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE1_ES_BLOB\"},
+      {\"path\":\"assets/updates/[inline-2].png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE2_BLOB\"},
+      {\"path\":\"assets/updates/[inline-2]-es.png\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$INLINE2_ES_BLOB\"}
     ]
   }" \
   https://api.github.com/repos/$REPO/git/trees \
@@ -736,21 +814,23 @@ rm -f /tmp/blob-*.json
 - If any API call fails, show the error to the reviewer and suggest running `/setup` to verify credentials
 - If the main branch SHA has changed since Step 1 (422 error on ref update), re-fetch the latest SHA and retry from Step 1
 
-#### Step 5.4: Confirm Publication
+#### Step 5.5: Confirm Publication
 
 After publishing, provide confirmation:
 - Commit link: `https://github.com/bookbot-kids/bookbot-www/commit/[COMMIT_SHA]`
-- Production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (live after auto-deploy completes)
+- English (US) production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (live after auto-deploy completes)
+- English (GB) production URL: `https://www.bookbotkids.com/en-gb/updates/[category]/[slug]/`
+- Spanish production URL: `https://www.bookbotkids.com/es/updates/[category]/[slug]/`
 
 ---
 
 ### PHASE 6: SOCIAL MEDIA POSTING
 
-After the article is published and the production URL is confirmed (Step 5.4), post the article to social media.
+After the article is published and the production URL is confirmed (Step 5.5), post the article to social media.
 
 Read and execute `social-media-posting.md`. Pass forward from the workflow context:
 - Article title, heading, slug, description, and body text
-- Production URL (from Step 5.4)
+- Production URL (from Step 5.5)
 - Inline image file paths (from Phase 3.5)
 - Hero image path
 
@@ -764,7 +844,7 @@ Once ALL tests pass and review is complete, the workflow produces:
 
 ### OUTPUT 1: Article File
 
-Location: `content/updates/[category]/[slug].md` (or `content/updates/[slug].md`)
+Location: `content/en/updates/[category]/[slug].md` (or `content/en/updates/[slug].md`)
 
 ```yaml
 ---

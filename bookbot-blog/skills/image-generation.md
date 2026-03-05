@@ -290,6 +290,50 @@ For illustrations, include the reference image as base64 inline data so Gemini m
 
 Adjust the `aspectRatio` per image. Supported values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`.
 
+### Illustration Translation (Spanish)
+
+To produce Spanish versions of illustrations, send the original English illustration to Gemini as input along with a prompt that specifies the translated text. This preserves the exact layout, colors, and style while replacing only the text labels.
+
+1. Read the original English illustration to identify all text labels in the image
+2. Translate each label to Latin American Spanish following the vocabulary rules in `spanish-translation.md` (e.g., "educadores" → "maestros", "Reading Skills" → "Lectura")
+3. Base64-encode the original illustration:
+   ```bash
+   base64 -i assets/updates/[descriptive-name].png
+   ```
+4. Send the original image + translation prompt to Gemini:
+   ```bash
+   curl -s -X POST \
+     "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent" \
+     -H "x-goog-api-key: $GEMINI_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "contents": [{"parts": [
+         {"text": "Edit this illustration to replace all English text with Spanish translations. Keep the exact same layout, colors, shapes, and style. Only change the text labels.\n\nTranslations:\n- \"[English label 1]\" → \"[Spanish label 1]\"\n- \"[English label 2]\" → \"[Spanish label 2]\"\n- \"[English label 3]\" → \"[Spanish label 3]\"\n\nDo not change anything else. Same background color, same geometric shapes, same arrangement."},
+         {"inline_data": {"mimeType": "image/png", "data": "BASE64_ENCODED_ORIGINAL_ILLUSTRATION"}}
+       ]}],
+       "generationConfig": {
+         "responseModalities": ["IMAGE", "TEXT"],
+         "imageConfig": {
+           "aspectRatio": "[SAME_AS_ORIGINAL]",
+           "imageSize": "2K"
+         }
+       }
+     }'
+   ```
+5. Save the Spanish illustration with `-es` suffix: `assets/updates/[descriptive-name]-es.png`
+
+**Important:** Use the same aspect ratio as the original illustration. The Spanish version must be a visual match with only the text changed.
+
+**File naming:** Append `-es` to the original filename:
+- English: `assets/updates/synthetic-vs-analytic-phonics.png`
+- Spanish: `assets/updates/synthetic-vs-analytic-phonics-es.png`
+
+**Cost:** Same as generating a new illustration (~$0.135 per image). Include these in the running cost total.
+
+**Hero image:** Does not need translation — photographic images contain no text labels. The hero image is shared between English and Spanish articles.
+
+---
+
 ### Handling the Response
 
 The API response contains the generated image as base64 in `candidates[0].content.parts`. For each image part with `inlineData`:

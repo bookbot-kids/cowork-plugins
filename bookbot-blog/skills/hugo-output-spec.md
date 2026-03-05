@@ -14,21 +14,27 @@ This skill defines the Hugo-compatible output format for all Bookbot blog articl
 
 ## Content Directory Structure
 
-Blog posts live under `/content/updates/`. Posts can be at the root level or inside a subcategory folder:
+Blog posts are published in three locales: `content/en/updates/` (US English), `content/en-gb/updates/` (British English), and `content/es/updates/` (Spanish). All three share the same directory structure and filenames:
 
 ```
-content/updates/
-├── _index.md                                         # Updates listing page
-├── dyslexia/                                         # Category: Dyslexia
+content/en/updates/                                    # US English (primary)
+├── _index.md
+├── dyslexia/
 │   ├── _index.md
 │   └── what-is-dyslexia.md
-├── get-the-most-out-of-bookbot/                      # Category: Tips for Parents
+├── get-the-most-out-of-bookbot/
 │   ├── _index.md
 │   └── 8-ways-to-boost-reading-motivation.md
-├── how-do-children-learn-to-read/                     # Category: Science of Reading
+├── how-do-children-learn-to-read/
 │   ├── _index.md
 │   └── what-is-phonics.md
-└── bookbot-wins-global-edtech-competition.md          # Root-level post (no category)
+└── bookbot-wins-global-edtech-competition.md
+
+content/en-gb/updates/                                 # British English (US→UK spelling swap)
+└── [same structure, same filenames, UK spellings]
+
+content/es/updates/                                    # Spanish (full translation)
+└── [same structure, same filenames, translated content]
 ```
 
 **This is NOT a page bundle system.** Articles are standalone `.md` files. Images are stored separately in `/assets/updates/`.
@@ -332,10 +338,17 @@ When publishing a new article (via GitHub API):
 ```
 bookbot-www/
 ├── assets/updates/
-│   ├── [hero-image].png           # Hero image
-│   ├── [inline-image-1].jpeg      # Inline images
+│   ├── [hero-image].png           # Hero image (shared across all locales)
+│   ├── [inline-image-1].png       # English inline illustrations
+│   ├── [inline-image-1]-es.png    # Spanish inline illustrations
 │   └── [inline-image-2].png
-└── content/updates/
+├── content/en/updates/
+│   └── [category-if-applicable]/
+│       └── [slug].md              # US English article
+├── content/en-gb/updates/
+│   └── [category-if-applicable]/
+│       └── [slug].md              # British English article
+└── content/es/updates/
     └── [category-if-applicable]/
-        └── [slug].md              # Article file
+        └── [slug].md              # Spanish translation
 ```
