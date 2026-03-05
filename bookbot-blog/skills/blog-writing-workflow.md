@@ -820,7 +820,7 @@ After publishing, provide confirmation:
 - Commit link: `https://github.com/bookbot-kids/bookbot-www/commit/[COMMIT_SHA]`
 - English (US) production URL: `https://www.bookbotkids.com/updates/[category]/[slug]/` (live after auto-deploy completes)
 - English (GB) production URL: `https://www.bookbotkids.com/en-gb/updates/[category]/[slug]/`
-- Spanish production URL: `https://www.bookbotkids.com/es/updates/[category]/[slug]/`
+- Spanish production URL: `https://www.bookbotkids.com/es/articulos/[translated-category]/[translated-slug]/` (use the `url` field from the Spanish article's front matter)
 
 ---
 

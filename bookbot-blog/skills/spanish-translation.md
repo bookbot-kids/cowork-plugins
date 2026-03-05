@@ -137,8 +137,9 @@ Translate the following blog post from English to Latin American Spanish for the
 
 RULES:
 - Translate ALL frontmatter values: title, description, summary, heading, alt text, category names.
-- Keep these fields UNCHANGED: slug, url, date, author slug, layout, type, all YAML keys, markdown links/URLs.
+- Keep these fields UNCHANGED: slug, date, author slug, image (hero) path, layout, type, all YAML keys, markdown links/URLs, category (keep the English folder name).
 - For inline illustration image paths: replace the filename with the `-es` variant (e.g., `/images/updates/phonics-diagram.png` → `/images/updates/phonics-diagram-es.png`). The hero image path stays unchanged (photographic, no text to translate).
+- ADD a `url:` field to the front matter with the fully translated Spanish URL path. The URL structure is: `/es/articulos/[translated-category]/[translated-slug]/`. Use the category translations below and create a short, natural Spanish slug for the article (not a word-for-word translation of the English slug — write it the way a Spanish speaker would search for the topic).
 - Translate the full article body.
 
 STYLE (follow strictly):
@@ -177,7 +178,38 @@ Paste the full English article `.md` file content after this prompt and submit t
 | English source | `content/en/updates/[category]/[slug].md` |
 | Spanish destination | `content/es/updates/[category]/[slug].md` |
 
-Keep the same filename (English slug). Only translate the content inside the file. The subdirectory structure mirrors the English source exactly.
+Keep the same filename (English slug) and category folder. Only translate the content inside the file. The file system structure mirrors the English source exactly — the translated URL path is handled by the `url:` front matter field, not by folder names.
+
+### Spanish URL Path
+
+Every Spanish article must have a `url:` field in its front matter with a fully translated path:
+
+```
+url: "/es/articulos/[translated-category]/[translated-slug]/"
+```
+
+For root-level articles (no category): `url: "/es/articulos/[translated-slug]/"`
+
+### Category URL Translations
+
+| English category folder | Spanish URL segment |
+|---|---|
+| `how-do-children-learn-to-read` | `como-aprenden-los-ninos-a-leer` |
+| `dyslexia` | `dislexia` |
+| `get-the-most-out-of-bookbot` | `aprovecha-bookbot-al-maximo` |
+
+If a new category is created, translate the category name to a short, natural Spanish slug and add it to this table.
+
+### Spanish Slug
+
+The article slug in the `url:` field should be a natural Spanish translation of the topic — not a word-for-word translation of the English slug. Keep it short, lowercase, hyphenated, and readable. Examples:
+
+| English slug | Spanish URL slug |
+|---|---|
+| `orthographic-mapping` | `mapeo-ortografico` |
+| `paired-reading` | `lectura-en-pareja` |
+| `emotional-stories-vocabulary` | `historias-emocionales-vocabulario` |
+| `is-dyslexia-hereditary` | `la-dislexia-es-hereditaria` |
 
 ---
 
@@ -212,7 +244,9 @@ For each inline illustration in the article:
 
 - [ ] Filename matches the English source (same slug)
 - [ ] File is saved to `content/es/updates/` (matching the English subdirectory)
-- [ ] `slug` and `url` fields are unchanged
+- [ ] `slug` field is unchanged (matches English slug)
+- [ ] `url` field is set with fully translated Spanish path (`/es/articulos/[category]/[slug]/`)
+- [ ] `category` field is unchanged (English folder name)
 - [ ] `date` and `author` fields are unchanged
 - [ ] Hero image path is unchanged (shared between languages)
 - [ ] Inline illustration paths use `-es` suffix (e.g., `diagram-es.png`)
