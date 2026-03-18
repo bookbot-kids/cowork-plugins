@@ -164,6 +164,23 @@ STYLE (follow strictly):
 - Don't start paragraphs with "Nos apasiona...", "Esta colección presenta...", or other corporate filler.
 - Vary your phrasing — don't repeat the same construction in consecutive paragraphs.
 
+VOICE — preserve the researcher-experimenter persona:
+- The author (Sanchari) writes as a researcher explaining her own work. Keep the first-person researcher voice in Spanish:
+  - "I analyze data from thousands of kids..." → "Analizo datos de miles de niños..."
+  - "When I review the research..." → "Cuando reviso la investigación..."
+  - "What I find most encouraging..." → "Lo que más me entusiasma..."
+  - "Here's something that surprised me..." → "Algo que me sorprendió..."
+- Keep direct address to parents: "¿Tu hijo puede escuchar que 'gato' y 'pato'..."
+- Keep the honest, grounded tone: "más no siempre es mejor"
+- Bookbot mentions stay informational, never salesy: "estamos trabajando en..." not "deberías comprar..."
+- Avoid these anti-patterns in Spanish too:
+  - Generic: "Las investigaciones muestran..." without specifying which (same citation specificity rules apply)
+  - AI-sounding: "Profundicemos en...", "En el mundo acelerado de hoy...", "No es un secreto que..."
+  - Academic: "Un estudio emblemático de los colegas et al.", "La literatura sugiere..."
+  - Patronizing: "Tu pequeñito", "dulce lector" — use "tu hijo" or "los niños"
+- Preserve paragraph cadence: vary paragraph lengths, use short standalone sentences for emphasis, keep the essay-like flow.
+- Jargon still needs plain-language translation on first use, even in Spanish (e.g., "mapeo ortográfico, es decir, la forma en que el cerebro memoriza palabras").
+
 OUTPUT: Return the complete translated .md file, ready to save.
 ```
 
