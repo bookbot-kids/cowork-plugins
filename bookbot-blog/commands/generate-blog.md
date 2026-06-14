@@ -15,14 +15,15 @@ This command is the entry point for the Bookbot blog writing workflow. When invo
 Before starting, check that all required environment variables are set:
 
 ```bash
-echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}" "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}" "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}" "FACEBOOK_PAGE_TOKEN=${FACEBOOK_PAGE_TOKEN:+set}" "FACEBOOK_PAGE_ID=${FACEBOOK_PAGE_ID:+set}" "INSTAGRAM_ACCOUNT_ID=${INSTAGRAM_ACCOUNT_ID:+set}" "PINTEREST_TOKEN=${PINTEREST_TOKEN:+set}" "PINTEREST_BOARD_ID=${PINTEREST_BOARD_ID:+set}" "LINKEDIN_TOKEN=${LINKEDIN_TOKEN:+set}" "LINKEDIN_ORG_ID=${LINKEDIN_ORG_ID:+set}"
+command -v codex >/dev/null && test -f ~/.codex/auth.json && echo "codex=ready" || echo "codex=MISSING"
+echo "GITHUB_TOKEN=${GITHUB_TOKEN:+set}" "BOOKBOT_AUTHOR=${BOOKBOT_AUTHOR:+set}" "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}" "FACEBOOK_PAGE_TOKEN=${FACEBOOK_PAGE_TOKEN:+set}" "FACEBOOK_PAGE_ID=${FACEBOOK_PAGE_ID:+set}" "INSTAGRAM_ACCOUNT_ID=${INSTAGRAM_ACCOUNT_ID:+set}" "PINTEREST_TOKEN=${PINTEREST_TOKEN:+set}" "PINTEREST_BOARD_ID=${PINTEREST_BOARD_ID:+set}" "LINKEDIN_TOKEN=${LINKEDIN_TOKEN:+set}" "LINKEDIN_ORG_ID=${LINKEDIN_ORG_ID:+set}"
 ```
 
-If any variable shows as empty (not "set"), stop and tell the user:
+If the Codex check shows `MISSING`, or any variable shows as empty (not "set"), stop and tell the user:
 
-> Some required configuration is missing. Please run `/setup` first to configure your API keys, author details, and social media credentials.
+> Some required configuration is missing. Please run `/setup` first to configure the Codex CLI (image generation), your API keys, author details, and social media credentials.
 
-Do NOT proceed with the workflow until all 11 variables are confirmed set.
+Do NOT proceed with the workflow until the Codex CLI is ready and all 10 variables are confirmed set.
 
 ---
 
@@ -43,9 +44,17 @@ Ask the employee:
 > - A research paper URL or DOI
 > - *(Event only)* Event name, date, location, and key details
 >
+Also ask:
+
+> **When should this publish?**
+>
+> - **Now** *(default)* — goes live on the next site build
+> - **A future date** — provide a date (Australia/Melbourne time); the article is committed now but stays hidden on the live site until that date, then the daily rebuild surfaces it automatically
+
 Wait for their response. Extract:
 - **ARTICLE_TYPE**: "research" (default) or "event"
 - **TOPIC**: The topic, URL, DOI, or event details provided
+- **PUBLISH_DATE**: A future date if scheduling, otherwise today (used for the front-matter `date` — see `hugo-output-spec.md`)
 
 **If ARTICLE_TYPE is "event"**, also gather:
 - **Event details**: Name, date, location, who attended, what happened, why it matters
@@ -55,7 +64,7 @@ Wait for their response. Extract:
 
 ## Step 2: Execute the Blog Writing Workflow
 
-Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_TYPE` to the workflow — it controls which phases are executed.
+Read and follow the `blog-writing-workflow.md` guide in full. Pass the `ARTICLE_TYPE` to the workflow — it controls which phases are executed.
 
 **Research articles** — all phases:
 
@@ -63,7 +72,7 @@ Read and follow the `blog-writing-workflow.md` skill in full. Pass the `ARTICLE_
 2. **Phase 1** — Research gathering
 3. **Phase 2** — Evidence organization
 4. **Phase 3** — Article generation (using `voice-guide.md` and `hugo-output-spec.md`)
-5. **Phase 3.5** — Image generation (using `image-generation.md` and the Gemini API)
+5. **Phase 3.5** — Image generation (using `image-generation.md` and Codex `@imagegen`)
 6. **Phase 4** — Quality testing with self-correction
 7. **Phase 5** — Review, iteration, and publishing
 8. **Phase 6** — Social media posting (Facebook, Instagram, Pinterest, LinkedIn)
@@ -95,11 +104,11 @@ After presenting the article and images:
 
 Once approved:
 
-1. Commit the article (`.md` file) and images directly to `main` in the `bookbot-www` Hugo website repository
+1. Commit the article (`.md` file) and images directly to `main` in the `bookbot-www` Hugo website repository — this happens now even for a future `PUBLISH_DATE` (the article is in the repo but Hugo hides it until its date)
 2. Post a confirmation message with:
    - The commit link
-   - The production URL (live after auto-deploy)
-3. Proceed to social media posting (Phase 6) — wait for deployment, select an illustration, generate hooks, get user approval, and post to all four platforms
+   - The production URL — **live after auto-deploy** if publishing now; **goes live on `PUBLISH_DATE`** (via the daily rebuild) if scheduled. State which, and the date if scheduled.
+3. **If publishing now:** proceed to social media posting (Phase 6) — wait for deployment, select an illustration, generate hooks, get user approval, and post to all four platforms. **If scheduled for the future:** hold social posting until the article is actually live (it can't be shared before its publish date). Requires `/setup-publishing-schedule` to be configured so the daily rebuild runs.
 
 ---
 

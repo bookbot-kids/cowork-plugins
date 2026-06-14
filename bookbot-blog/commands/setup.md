@@ -4,25 +4,30 @@ Check that all required configuration is in place, and guide the user through fi
 
 ---
 
+## Prerequisite: Codex CLI (image generation)
+
+Image generation runs through the **Codex CLI's `@imagegen` skill** (`gpt-image-2`), which uses your ChatGPT-plan login — **no API key**. This is a tool/auth check, not an environment variable. See Step 1a below.
+
 ## Required Configuration
 
 | # | Variable | Purpose |
 |---|----------|---------|
-| 1 | `GEMINI_API_KEY` | Image generation via Gemini API |
-| 2 | `GITHUB_TOKEN` | Publishing articles to bookbot-www via GitHub API |
-| 3 | `BOOKBOT_AUTHOR` | Author slug for article front matter |
-| 4 | `DATAFORSEO_AUTH` | DataForSEO API credentials (Base64 encoded `login:password`) for keyword and FAQ research |
-| 5 | `FACEBOOK_PAGE_TOKEN` | Long-lived Page Access Token for Facebook and Instagram posting |
-| 6 | `FACEBOOK_PAGE_ID` | Facebook Page ID for the Bookbot page |
-| 7 | `INSTAGRAM_ACCOUNT_ID` | Instagram Business Account ID (linked to the Facebook Page) |
-| 8 | `PINTEREST_TOKEN` | OAuth 2.0 Bearer token for Pinterest API |
-| 9 | `PINTEREST_BOARD_ID` | Pinterest board ID to pin articles to |
-| 10 | `LINKEDIN_TOKEN` | OAuth 2.0 Bearer token for LinkedIn API |
-| 11 | `LINKEDIN_ORG_ID` | LinkedIn Organisation (Company Page) ID |
+| 1 | `GITHUB_TOKEN` | Publishing articles to bookbot-www via GitHub API |
+| 2 | `BOOKBOT_AUTHOR` | Author slug for article front matter |
+| 3 | `DATAFORSEO_AUTH` | DataForSEO API credentials (Base64 encoded `login:password`) for keyword and FAQ research |
+| 4 | `FACEBOOK_PAGE_TOKEN` | Long-lived Page Access Token for Facebook and Instagram posting |
+| 5 | `FACEBOOK_PAGE_ID` | Facebook Page ID for the Bookbot page |
+| 6 | `INSTAGRAM_ACCOUNT_ID` | Instagram Business Account ID (linked to the Facebook Page) |
+| 7 | `PINTEREST_TOKEN` | OAuth 2.0 Bearer token for Pinterest API |
+| 8 | `PINTEREST_BOARD_ID` | Pinterest board ID to pin articles to |
+| 9 | `LINKEDIN_TOKEN` | OAuth 2.0 Bearer token for LinkedIn API |
+| 10 | `LINKEDIN_ORG_ID` | LinkedIn Organisation (Company Page) ID |
 
-All 11 variables are required.
+All 10 variables are required, plus the Codex CLI prerequisite above.
 
 All variables are stored in `.claude/settings.local.json` (gitignored, per-machine). They persist across sessions, sandbox restarts, and plugin updates automatically.
+
+> **Optional:** to auto-publish future-dated articles, also run `/setup-publishing-schedule` once to set up the daily site rebuild.
 
 ---
 
@@ -30,13 +35,19 @@ All variables are stored in `.claude/settings.local.json` (gitignored, per-machi
 
 For each variable, check if it's already set by running `echo $VARIABLE_NAME`. If it returns a value, it's configured. If empty, follow the setup steps below and then save it (see "Saving Variables" at the end).
 
-### 1a. GEMINI_API_KEY
+### 1a. Codex CLI (image generation)
 
-Check: `echo $GEMINI_API_KEY`
+Image generation uses the Codex CLI's `@imagegen` skill — no API key, billed to your ChatGPT plan.
 
-If missing, ask the user for their Gemini API key.
+Check both that Codex is installed and that it is authenticated:
+```bash
+command -v codex && test -f ~/.codex/auth.json && echo "codex ready"
+```
 
-If the user doesn't have a key, point them to: https://aistudio.google.com/apikey
+- If `codex` is **not installed**, point the user to install the Codex CLI (e.g. `npm i -g @openai/codex`), then run `codex login` to sign in with their ChatGPT plan.
+- If `codex` is installed but `~/.codex/auth.json` is **missing**, have the user run `codex login`.
+
+This is a prerequisite tool, not an environment variable — do **not** add anything to the `env` block for it. There is no API key to store, and the plugin must never use an `OPENAI_API_KEY` or call the gpt-image API directly.
 
 ### 1b. GITHUB_TOKEN
 
@@ -220,7 +231,6 @@ Target format:
 {
   "permissions": { ... },
   "env": {
-    "GEMINI_API_KEY": "the-key",
     "GITHUB_TOKEN": "the-token",
     "BOOKBOT_AUTHOR": "the-slug",
     "DATAFORSEO_AUTH": "base64-encoded-login:password",
@@ -235,7 +245,7 @@ Target format:
 }
 ```
 
-Variables saved here are available as standard environment variables (`$GEMINI_API_KEY`, etc.) in all subsequent commands — no restart required.
+Variables saved here are available as standard environment variables (`$GITHUB_TOKEN`, etc.) in all subsequent commands — no restart required.
 
 ---
 
@@ -244,8 +254,10 @@ Variables saved here are available as standard environment variables (`$GEMINI_A
 After saving all variables, re-check each one to confirm it's set:
 
 ```bash
+# Prerequisite: Codex CLI for image generation
+command -v codex >/dev/null && test -f ~/.codex/auth.json && echo "codex=ready" || echo "codex=MISSING"
+
 # Core (blog generation & publishing)
-echo "GEMINI_API_KEY=${GEMINI_API_KEY:+set}"
 echo "GITHUB_TOKEN=${GITHUB_TOKEN:+set}"
 echo "BOOKBOT_AUTHOR=$BOOKBOT_AUTHOR"
 echo "DATAFORSEO_AUTH=${DATAFORSEO_AUTH:+set}"
@@ -260,7 +272,7 @@ echo "LINKEDIN_TOKEN=${LINKEDIN_TOKEN:+set}"
 echo "LINKEDIN_ORG_ID=${LINKEDIN_ORG_ID:+set}"
 ```
 
-Once all 11 checks pass, confirm:
+Once the Codex check shows `ready` and all 10 variable checks pass, confirm:
 
 > Setup complete. You're ready to use `/generate-blog`.
 
@@ -268,7 +280,7 @@ Once all 11 checks pass, confirm:
 
 ## Notes
 
-- Never log or echo back the full API key or token value. When confirming a key is set, show only the first 5 characters followed by `...` (e.g., `AIza...`).
+- Never log or echo back the full API key or token value. When confirming a token is set, show only the first 5 characters followed by `...` (e.g., `ghp_A...`).
 - Same rule for all tokens: `GITHUB_TOKEN`, `DATAFORSEO_AUTH`, `FACEBOOK_PAGE_TOKEN`, `PINTEREST_TOKEN`, `LINKEDIN_TOKEN` — first 5 characters + `...`.
 - For IDs (`FACEBOOK_PAGE_ID`, `INSTAGRAM_ACCOUNT_ID`, `PINTEREST_BOARD_ID`, `LINKEDIN_ORG_ID`), confirm the full value since they are not sensitive.
 - For `BOOKBOT_AUTHOR`, confirm the full value since it's not sensitive.
