@@ -523,7 +523,7 @@ Post an article with image to the Bookbot LinkedIn company page. LinkedIn requir
 curl -s -X POST \
   "https://api.linkedin.com/rest/images?action=initializeUpload" \
   -H "Authorization: Bearer $LINKEDIN_TOKEN" \
-  -H "LinkedIn-Version: 202501" \
+  -H "LinkedIn-Version: 202605" \
   -H "X-Restli-Protocol-Version: 2.0.0" \
   -H "Content-Type: application/json" \
   -d '{
@@ -590,7 +590,7 @@ LIEOF
 curl -s -i -X POST \
   "https://api.linkedin.com/rest/posts" \
   -H "Authorization: Bearer $LINKEDIN_TOKEN" \
-  -H "LinkedIn-Version: 202501" \
+  -H "LinkedIn-Version: 202605" \
   -H "X-Restli-Protocol-Version: 2.0.0" \
   -H "Content-Type: application/json" \
   -d @/tmp/linkedin-post.json

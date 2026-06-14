@@ -200,7 +200,7 @@ If missing, guide the user through setup:
    ```bash
    curl -s "https://api.linkedin.com/rest/organizationAcls?q=roleAssignee" \
      -H "Authorization: Bearer $LINKEDIN_TOKEN" \
-     -H "LinkedIn-Version: 202501" \
+     -H "LinkedIn-Version: 202605" \
      -H "X-Restli-Protocol-Version: 2.0.0" | jq '.elements[].organization'
    ```
    The organisation URN contains the ID (e.g., `urn:li:organization:12345678` — the ID is `12345678`).
@@ -211,7 +211,7 @@ Verify access:
 ```bash
 curl -s "https://api.linkedin.com/rest/organizations/$LINKEDIN_ORG_ID" \
   -H "Authorization: Bearer $LINKEDIN_TOKEN" \
-  -H "LinkedIn-Version: 202501" \
+  -H "LinkedIn-Version: 202605" \
   -H "X-Restli-Protocol-Version: 2.0.0" | jq '.localizedName'
 ```
 Should return the organisation name.
